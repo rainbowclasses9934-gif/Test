@@ -48,6 +48,7 @@ html,
 body{
     min-height:100%;
     overscroll-behavior:none;
+    scroll-behavior: smooth; /* Added for smooth scrolling */
 }
 body{
     color:var(--text);
@@ -105,10 +106,13 @@ button{
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    transition:.2s;
+    /* Added transition for smooth name animation */
+    transition: all 0.3s ease; 
+    opacity: 1;
+    transform: scale(1);
 }
 .brand-button:active{
-    transform:scale(.97);
+    transform:scale(.95);
 }
 .brand-button.user-mode{
     max-width:180px;
@@ -1476,9 +1480,9 @@ themeGrid.addEventListener("click", () => {
     profileModal.classList.remove("show");
 });
 loadTheme();
-/* =========================================================
+/* =====================================================
    DIRECT BASE64 MEDIA COMPRESSION (< 1 MB)
-========================================================= */
+===================================================== */
 imageBtn.addEventListener("click", () => imageInput.click());
 imageInput.addEventListener("change", event => {
     const file = event.target.files[0];
@@ -1541,9 +1545,9 @@ function blobToBase64(blob){
         reader.readAsDataURL(blob);
     });
 }
-/* =========================================================
+/* =====================================================
    AUDIO RECORDING
-========================================================= */
+===================================================== */
 voiceBtn.addEventListener("click", async () => {
     if(audioState === "idle"){
         try{
@@ -1584,9 +1588,9 @@ voiceBtn.addEventListener("click", async () => {
         voiceBtn.title = "Voice message";
     }
 });
-/* =========================================================
+/* =====================================================
    SEND MESSAGE (DIRECTLY TO FIRESTORE)
-========================================================= */
+===================================================== */
 sendBtn.addEventListener("click", sendMessage);
 async function sendMessage(){
     if(!firebaseReady){
@@ -1665,9 +1669,9 @@ function resetComposer(){
     voiceBtn.textContent = "🎙️";
     voiceBtn.title = "Voice message";
 }
-/* =========================================================
+/* =====================================================
    RENDER MEDIA
-========================================================= */
+===================================================== */
 function mediaHTML(message){
     let html = "";
     if(message.audioUrl){
@@ -1703,9 +1707,9 @@ window.playAudio = function(id){
     }
     audio.onended = () => { if(status) status.textContent = "Click to play"; };
 };
-/* =========================================================
+/* =====================================================
    IMAGE VIEWER
-========================================================= */
+===================================================== */
 const imageViewer = document.getElementById("imageViewer");
 const viewerImage = document.getElementById("viewerImage");
 window.openImageViewer = function(src){
@@ -1719,9 +1723,9 @@ document.getElementById("closeImageViewer").addEventListener("click", () => {
 imageViewer.addEventListener("click", event => {
     if(event.target === imageViewer) imageViewer.classList.remove("show");
 });
-/* =========================================================
+/* =====================================================
    EDIT & DELETE MESSAGES
-========================================================= */
+===================================================== */
 window.editMessage = function(id){
     const message = globalMessages.find(item => item.id === id);
     if(!message) return;
@@ -1759,9 +1763,9 @@ window.adminDeleteMessage = async function(id){
     if(!adminLoggedIn) return;
     await deleteMessage(id, true);
 };
-/* =========================================================
+/* =====================================================
    LIKE & PIN
-========================================================= */
+===================================================== */
 window.toggleLike = async function(id, currentLikes){
     const key = "rainbow_liked_" + id;
     const alreadyLiked = localStorage.getItem(key) === "true";
@@ -1785,9 +1789,9 @@ window.togglePin = async function(id, currentStatus){
         await updateDoc(doc(db, COMMENTS_COLLECTION, id), { pinned: !currentStatus });
     }catch(error){ console.error("Pin error:", error); }
 };
-/* =========================================================
+/* =====================================================
    REPLIES
-========================================================= */
+===================================================== */
 window.toggleReply = function(id){
     const box = document.getElementById("reply_" + id);
     if(box) box.classList.toggle("show");
@@ -1832,9 +1836,9 @@ window.postReply = async function(parentId){
         showToast("Reply send नहीं हुआ।");
     }
 };
-/* =========================================================
+/* =====================================================
    RENDER MESSAGES
-========================================================= */
+===================================================== */
 function renderMessages(){
     let mainMessages = globalMessages.filter(message => !message.parentId);
     const replies = globalMessages.filter(message => message.parentId);
@@ -1972,9 +1976,9 @@ function renderMessages(){
     }
     setupViewCounter();
 }
-/* =========================================================
+/* =====================================================
    VIEW COUNTER
-========================================================= */
+===================================================== */
 function setupViewCounter(){
     if(!("IntersectionObserver" in window)) return;
     const observer = new IntersectionObserver(entries => {
@@ -1993,14 +1997,14 @@ function setupViewCounter(){
     }, { threshold: .6 });
     document.querySelectorAll("[data-comment-id]").forEach(element => observer.observe(element));
 }
-/* =========================================================
+/* =====================================================
    FIRESTORE SUBSCRIPTION
-========================================================= */
+===================================================== */
 function subscribeMessages(){
     if(!firebaseReady){
         messagesList.innerHTML = `
             <div class="state-box">
-                🔧 Firebase अभी configure नहीं हुआ है।<br><br>
+                🔧 Firebase अभी configure नहीं हुआ है。<br><br>
                 नया Firebase config code के <b>firebaseConfig</b> section में डालें।
             </div>
         `;
@@ -2019,50 +2023,52 @@ function subscribeMessages(){
         console.error("Firestore listener error:", error);
         messagesList.innerHTML = `
             <div class="state-box">
-                ❌ Messages load नहीं हो पाए।<br>
+                ❌ Messages load नहीं हो पाए。<br>
                 Firebase Firestore rules/index/config जाँचें।
             </div>
         `;
     });
 }
-/* =========================================================
-   LISTENERS & AUTO-SAVE USER VERIFICATION
-========================================================= */
-// 1. Restore saved User ID & verified name on initial load
-const savedUserId = localStorage.getItem("rainbow_user_id");
-if(savedUserId){
-    userIdInput.value = savedUserId;
-    const id = normalizeID(savedUserId);
-    if(studentData[id]){
-        brandButton.textContent = studentData[id];
-    }
-}
-
-// 2. Auto verify & update display on typing ID
+/* =====================================================
+   LISTENERS & LOGIC
+===================================================== */
 userIdInput.addEventListener("input", () => {
     const id = normalizeID(userIdInput.value);
     const name = studentData[id];
+    const newText = name || "RAINBOW CLASSES";
     
-    if(name){
-        brandButton.textContent = name;
-        localStorage.setItem("rainbow_user_id", userIdInput.value.trim());
-    }else if(adminLoggedIn && userIdInput.value.trim()){
-        brandButton.textContent = userIdInput.value.trim();
-    }else if(adminLoggedIn){
-        brandButton.textContent = "Admin";
-    }else{
-        brandButton.textContent = "RAINBOW CLASSES";
-        if(!userIdInput.value.trim()){
-            localStorage.removeItem("rainbow_user_id");
-        }
+    // Auto-save logic
+    if(name) {
+        localStorage.setItem("rainbow_user_id", userIdInput.value);
+    } else if (!userIdInput.value) {
+        localStorage.removeItem("rainbow_user_id");
     }
 
-    if(myMessagesOnly){
-        myMessagesOnly = false;
-        filterBanner.classList.remove("show");
-        heroSection.style.display = "block";
+    // Smooth animation logic for name show-up
+    if (brandButton.textContent !== newText) {
+        brandButton.style.opacity = "0";
+        brandButton.style.transform = "scale(0.95)";
+        
+        setTimeout(() => {
+            brandButton.textContent = newText;
+            brandButton.style.opacity = "1";
+            brandButton.style.transform = "scale(1)";
+            
+            if(myMessagesOnly){
+                myMessagesOnly = false;
+                filterBanner.classList.remove("show");
+                heroSection.style.display = "block";
+            }
+            renderMessages();
+        }, 200);
+    } else {
+        if(myMessagesOnly){
+            myMessagesOnly = false;
+            filterBanner.classList.remove("show");
+            heroSection.style.display = "block";
+        }
+        renderMessages();
     }
-    renderMessages();
 });
 
 adminPinInput.addEventListener("input", () => {
@@ -2093,10 +2099,24 @@ clearAllBtn.addEventListener("click", () => {
         }
     });
 });
+
 subscribeMessages();
+
 window.addEventListener("beforeunload", () => {
     if(unsubscribeMessages) unsubscribeMessages();
 });
+
+/* =====================================================
+   INITIALIZE SAVED USER FROM LOCAL STORAGE
+===================================================== */
+const savedUserId = localStorage.getItem("rainbow_user_id");
+if(savedUserId){
+    userIdInput.value = savedUserId;
+    const id = normalizeID(savedUserId);
+    if(studentData[id]){
+        brandButton.textContent = studentData[id];
+    }
+}
 </script>
 </body>
 </html>
