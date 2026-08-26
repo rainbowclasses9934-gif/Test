@@ -48,7 +48,7 @@ html,
 body{
     min-height:100%;
     overscroll-behavior:none;
-    scroll-behavior: smooth; /* Added for smooth scrolling */
+    scroll-behavior: smooth;
 }
 body{
     color:var(--text);
@@ -106,7 +106,6 @@ button{
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    /* Added transition for smooth name animation */
     transition: all 0.3s ease; 
     opacity: 1;
     transform: scale(1);
@@ -359,11 +358,16 @@ button{
 /* =========================================================
    MEDIA
 ========================================================= */
+.image-gallery{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:11px;
+}
 .shared-image{
     display:block;
-    max-width:100%;
-    max-height:340px;
-    margin-top:11px;
+    width:100%;
+    max-height:420px;
     border-radius:12px;
     object-fit:cover;
     cursor:zoom-in;
@@ -1059,10 +1063,12 @@ body.dark #editInput{
 ===================================================== -->
 <div class="bottom-dock">
     <div class="media-buttons">
+        <!-- multiple attribute added to select more than 1 image -->
         <input
             id="imageInput"
             type="file"
             accept="image/*"
+            multiple
             hidden>
         <button
             class="media-btn"
@@ -1318,7 +1324,7 @@ let unsubscribeMessages = null;
 let currentLimit = 20;
 let adminLoggedIn = false;
 let myMessagesOnly = false;
-let selectedImageFile = null;
+let selectedImageFiles = []; // Multiple images support array
 let selectedAudioBlob = null;
 let audioRecorder = null;
 let audioChunks = [];
@@ -1481,43 +1487,49 @@ themeGrid.addEventListener("click", () => {
 });
 loadTheme();
 /* =====================================================
-   DIRECT BASE64 MEDIA COMPRESSION (< 1 MB)
+   OPTIMIZED BASE64 MEDIA COMPRESSION (HD Quality & controlled size)
 ===================================================== */
 imageBtn.addEventListener("click", () => imageInput.click());
 imageInput.addEventListener("change", event => {
-    const file = event.target.files[0];
-    if(!file){
-        selectedImageFile = null;
+    const files = Array.from(event.target.files);
+    if(!files || files.length === 0){
+        selectedImageFiles = [];
         return;
     }
-    if(!file.type.startsWith("image/")){
+    const nonImages = files.filter(f => !f.type.startsWith("image/"));
+    if(nonImages.length > 0){
         openModal("Invalid File", "कृपया केवल image file चुनें।", "alert");
+        imageInput.value = "";
+        selectedImageFiles = [];
         return;
     }
-    selectedImageFile = file;
-    showToast(`Image selected: ${file.name}`);
+    selectedImageFiles = files;
+    if(files.length === 1){
+        showToast(`Image selected: ${files[0].name}`);
+    } else {
+        showToast(`${files.length} Images selected ✔️`);
+    }
 });
 messageInput.addEventListener("input", () => {
     messageInput.style.height = "42px";
     messageInput.style.height = Math.min(messageInput.scrollHeight, 105) + "px";
 });
-// Powerful Image Compression directly to Base64
-async function compressImageToBase64(file){
+// Optimised Image Compression function preserving HD quality (Targets ~500-700 KB per image)
+async function compressImageToBase64(file, maxDimension = 1600, quality = 0.82){
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = event => {
             const img = new Image();
             img.onload = () => {
-                const MAX_DIM = 600; // Heavily compressed dimension
                 let width = img.width;
                 let height = img.height;
-                if(width > MAX_DIM || height > MAX_DIM){
+                if(width > maxDimension || height > maxDimension){
                     if(width > height){
-                        height = Math.round((height * MAX_DIM) / width);
-                        width = MAX_DIM;
+                        height = Math.round((height * maxDimension) / width);
+                        width = maxDimension;
                     }else{
-                        width = Math.round((width * MAX_DIM) / height);
-                        height = MAX_DIM;
+                        width = Math.round((width * maxDimension) / height);
+                        height = maxDimension;
                     }
                 }
                 const canvas = document.createElement("canvas");
@@ -1525,8 +1537,8 @@ async function compressImageToBase64(file){
                 canvas.height = height;
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, width, height);
-                // Heavy compression (50% quality jpeg) to ensure it stays well under 1MB
-                const base64Data = canvas.toDataURL("image/jpeg", 0.5);
+                // Standard HD JPEG compression for perfect clarity without blurriness
+                const base64Data = canvas.toDataURL("image/jpeg", quality);
                 resolve(base64Data);
             };
             img.onerror = reject;
@@ -1553,7 +1565,6 @@ voiceBtn.addEventListener("click", async () => {
         try{
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             audioChunks = [];
-            // Lowest bitrate for ultra compression
             let options = { audioBitsPerSecond: 16000 };
             try { audioRecorder = new MediaRecorder(stream, options); }
             catch(e) { audioRecorder = new MediaRecorder(stream); }
@@ -1604,7 +1615,7 @@ async function sendMessage(){
         openModal("User ID Required", "कृपया अपना User ID दर्ज करें।", "alert");
         return;
     }
-    if(!text && !selectedImageFile && !selectedAudioBlob){
+    if(!text && selectedImageFiles.length === 0 && !selectedAudioBlob){
         openModal("Empty Message", "कुछ लिखें या image अथवा audio जोड़ें।", "alert");
         return;
     }
@@ -1619,15 +1630,27 @@ async function sendMessage(){
     sendBtn.textContent = "⏳";
     
     try{
-        let base64Image = null;
+        let base64Images = [];
         let base64Audio = null;
-        if(selectedImageFile){
-            base64Image = await compressImageToBase64(selectedImageFile);
+        
+        if(selectedImageFiles.length > 0){
+            const count = selectedImageFiles.length;
+            // Dynamically adjust per image parameters based on total count to ensure 
+            // perfect HD clarity while keeping overall document payload strictly < 1MB
+            let maxDim = 1600;
+            let quality = 0.82;
+            if(count === 2){ maxDim = 1200; quality = 0.76; }
+            else if(count >= 3){ maxDim = 1000; quality = 0.70; }
+
+            for(const file of selectedImageFiles){
+                const b64 = await compressImageToBase64(file, maxDim, quality);
+                base64Images.push(b64);
+            }
         }
         if(selectedAudioBlob){
             base64Audio = await blobToBase64(selectedAudioBlob);
         }
-        // Final payload size protection (< 900 KB for Firestore limit)
+        
         const payload = {
             userId: userId || "admin",
             userName: displayName,
@@ -1637,14 +1660,15 @@ async function sendMessage(){
             likes: 0,
             views: 0,
             pinned: false,
-            imageUrl: base64Image,
+            imageUrl: base64Images.length > 0 ? base64Images[0] : null, // Backward compatibility
+            imageUrls: base64Images, // Array supporting multiple images
             audioUrl: base64Audio,
             timestamp: serverTimestamp()
         };
         
         const totalSize = JSON.stringify(payload).length;
         if(totalSize > 950000){
-            throw new Error("File size limit exceeded 1MB. Please use smaller files.");
+            throw new Error("File size limit exceeded 1MB. Please send fewer or smaller images.");
         }
         
         await addDoc(collection(db, COMMENTS_COLLECTION), payload);
@@ -1653,7 +1677,7 @@ async function sendMessage(){
         showToast("Message successfully posted ✔️");
     }catch(error){
         console.error("Send message error:", error);
-        openModal("Message Failed", "Message भेजने में समस्या आई। File size 1 MB से कम रख कर दोबारा प्रयास करें।", "alert");
+        openModal("Message Failed", "Message भेजने में समस्या आई। File size limit 1 MB से कम रखें।", "alert");
     }finally{
         sendBtn.disabled = false;
         sendBtn.textContent = "➤";
@@ -1662,7 +1686,7 @@ async function sendMessage(){
 function resetComposer(){
     messageInput.value = "";
     messageInput.style.height = "42px";
-    selectedImageFile = null;
+    selectedImageFiles = [];
     selectedAudioBlob = null;
     imageInput.value = "";
     audioState = "idle";
@@ -1686,10 +1710,20 @@ function mediaHTML(message){
             </div>
         `;
     }
-    if(message.imageUrl){
-        html += `
-            <img class="shared-image" src="${escapeHTML(message.imageUrl)}" alt="Shared image" loading="lazy" onclick="openImageViewer(this.src)">
-        `;
+    
+    // Support for multiple images stored in imageUrls, fallback to single imageUrl if older message
+    const images = (message.imageUrls && message.imageUrls.length > 0)
+        ? message.imageUrls
+        : (message.imageUrl ? [message.imageUrl] : []);
+
+    if(images.length > 0){
+        html += `<div class="image-gallery">`;
+        images.forEach(imgSrc => {
+            html += `
+                <img class="shared-image" src="${escapeHTML(imgSrc)}" alt="Shared image" loading="lazy" onclick="openImageViewer(this.src)">
+            `;
+        });
+        html += `</div>`;
     }
     return html;
 }
@@ -1826,6 +1860,7 @@ window.postReply = async function(parentId){
             views: 0,
             pinned: false,
             imageUrl: null,
+            imageUrls: [],
             audioUrl: null,
             timestamp: serverTimestamp()
         });
@@ -2004,7 +2039,7 @@ function subscribeMessages(){
     if(!firebaseReady){
         messagesList.innerHTML = `
             <div class="state-box">
-                🔧 Firebase अभी configure नहीं हुआ है。<br><br>
+                🔧 Firebase अभी configure नहीं हुआ है।<br><br>
                 नया Firebase config code के <b>firebaseConfig</b> section में डालें।
             </div>
         `;
@@ -2023,7 +2058,7 @@ function subscribeMessages(){
         console.error("Firestore listener error:", error);
         messagesList.innerHTML = `
             <div class="state-box">
-                ❌ Messages load नहीं हो पाए。<br>
+                ❌ Messages load नहीं हो पाए।<br>
                 Firebase Firestore rules/index/config जाँचें।
             </div>
         `;
@@ -2043,7 +2078,6 @@ userIdInput.addEventListener("input", () => {
     } else if (!userIdInput.value) {
         localStorage.removeItem("rainbow_user_id");
     }
-
     // Smooth animation logic for name show-up
     if (brandButton.textContent !== newText) {
         brandButton.style.opacity = "0";
@@ -2070,7 +2104,6 @@ userIdInput.addEventListener("input", () => {
         renderMessages();
     }
 });
-
 adminPinInput.addEventListener("input", () => {
     const pin = adminPinInput.value.trim().toLowerCase();
     adminLoggedIn = pin === ADMIN_PIN;
@@ -2099,13 +2132,10 @@ clearAllBtn.addEventListener("click", () => {
         }
     });
 });
-
 subscribeMessages();
-
 window.addEventListener("beforeunload", () => {
     if(unsubscribeMessages) unsubscribeMessages();
 });
-
 /* =====================================================
    INITIALIZE SAVED USER FROM LOCAL STORAGE
 ===================================================== */
