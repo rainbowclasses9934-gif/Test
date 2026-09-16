@@ -83,10 +83,6 @@
         }
         .roll-row label { cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 16px; width: 100%; }
         .roll-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #38ef7d; cursor: pointer;}
-        
-        /* Disabled checkbox styling for locked roll numbers */
-        .roll-row input[type="checkbox"]:disabled { cursor: not-allowed; opacity: 0.5; filter: grayscale(1); }
-        .roll-row label.disabled-label { cursor: not-allowed; opacity: 0.7; }
 
         /* STYLISH GLASS POPUP MODAL */
         .modal-overlay {
@@ -300,15 +296,27 @@
             }).catch(err => console.error("Fetch Error: ", err));
         }
 
-        // Handle checkbox logic
+        // Lock checkbox while maintaining completely normal green appearance
+        function lockTargetCheckbox(safeId) {
+            const chk = document.getElementById(safeId);
+            const lbl = document.getElementById('label_' + safeId);
+            if (chk) {
+                chk.checked = true;
+                chk.style.pointerEvents = 'none'; // Lock from click/untick
+            }
+            if (lbl) {
+                lbl.style.pointerEvents = 'none'; // Prevent label click toggling
+            }
+        }
+
+        // Handle checkbox change
         function handleCheckboxChange(element, roll) {
             hasUnsavedChanges = true;
             
-            // If the checked box is Roll 10 or 19
+            // If checked box is Roll 10 or 19
             if (element.checked && isTargetRoll(roll)) {
-                element.disabled = true; // Lock it forever
-                element.parentElement.classList.add('disabled-label');
-                sendToGoogleSheet(); // Send it immediately
+                lockTargetCheckbox(getSafeId(roll));
+                sendToGoogleSheet(); // Send immediately
             }
         }
 
@@ -339,10 +347,8 @@
                     const chk = document.getElementById(safeId);
                     if (chk) {
                         chk.checked = true;
-                        // Re-lock 10 & 19 if they were already saved/checked
                         if (isTargetRoll(roll)) {
-                            chk.disabled = true;
-                            document.getElementById('label_' + safeId).classList.add('disabled-label');
+                            lockTargetCheckbox(safeId);
                         }
                     }
                 });
@@ -355,9 +361,29 @@
             const pattern = document.getElementById('inputRollPattern').value.trim();
             if (branch === '' || className === '') { showGlassAlert("Please fill in Branch and Class details."); return; }
             if (pattern === '') { showGlassAlert("Please enter Roll Range (e.g. 2026-CE-1 to 100)."); return; }
+            
             rollNumbers = parseRollPattern(pattern);
             if (rollNumbers.length === 0) { showGlassAlert("Invalid Roll Pattern!"); return; }
+            
             renderAttendanceList(true);
+
+            // Check if Roll 10 or 19 is already checked (from previous edit)
+            let isTargetAlreadyChecked = false;
+            rollNumbers.forEach(roll => {
+                if (isTargetRoll(roll)) {
+                    const safeId = getSafeId(roll);
+                    const chk = document.getElementById(safeId);
+                    if (chk && chk.checked) {
+                        isTargetAlreadyChecked = true;
+                    }
+                }
+            });
+
+            // Re-send updated details to Google Sheet immediately if target roll is active
+            if (isTargetAlreadyChecked) {
+                sendToGoogleSheet();
+            }
+
             document.getElementById('home-screen').style.display = 'none';
             document.getElementById('attendance-screen').style.display = 'block';
             history.pushState({ screen: 'attendance' }, '');
@@ -420,11 +446,8 @@
                         const chk = document.getElementById(safeId);
                         if(chk) {
                             chk.checked = true;
-                            // Re-lock 10 & 19 if loaded from saved data
                             if (isTargetRoll(roll)) {
-                                chk.disabled = true;
-                                const lbl = document.getElementById('label_' + safeId);
-                                if(lbl) lbl.classList.add('disabled-label');
+                                lockTargetCheckbox(safeId);
                             }
                         }
                     });
@@ -437,7 +460,7 @@
         }
 
         // ==========================================
-        // PDF GENERATION (Google Sheet API removed from here)
+        // PDF GENERATION
         // ==========================================
         function downloadPdf() {
             const branchVal = document.getElementById('inputBranch').value;
