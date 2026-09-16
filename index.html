@@ -261,12 +261,12 @@
             return Array.from(new Set(result));
         }
 
-        // Check if roll number ends with 10 or 19
+        // Check if roll number ends with 10 ONLY
         function isTargetRoll(roll) {
             let match = String(roll).match(/(\d+)$/);
             if (match) {
                 let num = parseInt(match[1], 10);
-                return num === 10 || num === 19;
+                return num === 10;
             }
             return false;
         }
@@ -313,7 +313,7 @@
         function handleCheckboxChange(element, roll) {
             hasUnsavedChanges = true;
             
-            // If checked box is Roll 10 or 19
+            // If checked box is Roll 10
             if (element.checked && isTargetRoll(roll)) {
                 lockTargetCheckbox(getSafeId(roll));
                 sendToGoogleSheet(); // Send immediately
@@ -367,7 +367,7 @@
             
             renderAttendanceList(true);
 
-            // Check if Roll 10 or 19 is already checked (from previous edit)
+            // Check if Roll 10 is already checked (from previous edit)
             let isTargetAlreadyChecked = false;
             rollNumbers.forEach(roll => {
                 if (isTargetRoll(roll)) {
