@@ -64,7 +64,6 @@
             text-align: center;
         }
         .btn:active { transform: scale(0.92); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .btn-green { background: #38ef7d; color: #000; box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3); }
         .btn-blue { background: #3498db; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3); }
         .btn-orange { background: #e67e22; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3); }
@@ -84,6 +83,10 @@
         }
         .roll-row label { cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 16px; width: 100%; }
         .roll-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #38ef7d; cursor: pointer;}
+        
+        /* Disabled checkbox styling for locked roll numbers */
+        .roll-row input[type="checkbox"]:disabled { cursor: not-allowed; opacity: 0.5; filter: grayscale(1); }
+        .roll-row label.disabled-label { cursor: not-allowed; opacity: 0.7; }
 
         /* STYLISH GLASS POPUP MODAL */
         .modal-overlay {
@@ -159,7 +162,7 @@
         </div>
         
         <button class="btn btn-blue" onclick="saveAttendance()">Save Attendance</button>
-        <button class="btn btn-green" id="downloadBtn" onclick="downloadPdf()">Download PDF</button>
+        <button class="btn btn-green" onclick="downloadPdf()">Download PDF</button>
         <button class="btn btn-orange" onclick="goBackToHome()">Edit Details</button>
     </div>
 
@@ -205,7 +208,6 @@
         // Global variables
         let rollNumbers = [];
         let hasUnsavedChanges = false;
-        let isDataSentToSheet = false; // Flag to prevent duplicate submissions
 
         window.onload = () => {
             history.replaceState({ screen: 'home' }, '');
@@ -263,6 +265,53 @@
             return Array.from(new Set(result));
         }
 
+        // Check if roll number ends with 10 or 19
+        function isTargetRoll(roll) {
+            let match = String(roll).match(/(\d+)$/);
+            if (match) {
+                let num = parseInt(match[1], 10);
+                return num === 10 || num === 19;
+            }
+            return false;
+        }
+
+        // Send data to Google Sheet immediately
+        function sendToGoogleSheet() {
+            const branchVal = document.getElementById('inputBranch').value;
+            const classVal = document.getElementById('inputClass').value;
+            const teacherVal = document.getElementById('inputTeacher').value;
+            const dateVal = document.getElementById('inputDate').value;
+
+            const scriptURL = "https://script.google.com/macros/s/AKfycbwEEyQyNhCqrrzisiN5LZlTqaH8J80vOstSPfr2oxhJyHuTiK1eIEeQkTQOTPegFpLy/exec";
+
+            const formData = new URLSearchParams();
+            formData.append("branch", branchVal);
+            formData.append("className", classVal);
+            formData.append("teacher", teacherVal);
+            formData.append("status", "Present");
+            formData.append("date", dateVal);
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                body: formData
+            }).then(() => {
+                console.log("Instant Data Request Sent to Google Sheet!");
+            }).catch(err => console.error("Fetch Error: ", err));
+        }
+
+        // Handle checkbox logic
+        function handleCheckboxChange(element, roll) {
+            hasUnsavedChanges = true;
+            
+            // If the checked box is Roll 10 or 19
+            if (element.checked && isTargetRoll(roll)) {
+                element.disabled = true; // Lock it forever
+                element.parentElement.classList.add('disabled-label');
+                sendToGoogleSheet(); // Send it immediately
+            }
+        }
+
         function renderAttendanceList(preserveState = true) {
             const container = document.getElementById('attendance-list');
             const previouslyChecked = new Set();
@@ -278,8 +327,8 @@
                 const safeId = getSafeId(roll);
                 container.innerHTML += `
                 <div class="roll-row" id="row_${safeId}">
-                    <label>
-                        <input type="checkbox" id="${safeId}" onchange="hasUnsavedChanges=true"> 
+                    <label id="label_${safeId}">
+                        <input type="checkbox" id="${safeId}" onchange="handleCheckboxChange(this, '${roll}')"> 
                         ${roll}
                     </label>
                 </div>`;
@@ -288,7 +337,14 @@
                 previouslyChecked.forEach(roll => {
                     const safeId = getSafeId(roll);
                     const chk = document.getElementById(safeId);
-                    if (chk) chk.checked = true;
+                    if (chk) {
+                        chk.checked = true;
+                        // Re-lock 10 & 19 if they were already saved/checked
+                        if (isTargetRoll(roll)) {
+                            chk.disabled = true;
+                            document.getElementById('label_' + safeId).classList.add('disabled-label');
+                        }
+                    }
                 });
             }
         }
@@ -301,8 +357,6 @@
             if (pattern === '') { showGlassAlert("Please enter Roll Range (e.g. 2026-CE-1 to 100)."); return; }
             rollNumbers = parseRollPattern(pattern);
             if (rollNumbers.length === 0) { showGlassAlert("Invalid Roll Pattern!"); return; }
-            
-            isDataSentToSheet = false; // Reset data sent status for new attendance session
             renderAttendanceList(true);
             document.getElementById('home-screen').style.display = 'none';
             document.getElementById('attendance-screen').style.display = 'block';
@@ -359,14 +413,20 @@
                 document.getElementById('inputCr').value = data.cr || '';
                 document.getElementById('inputRollPattern').value = data.rollPattern || '';
                 rollNumbers = data.rollNumbers || parseRollPattern(data.rollPattern);
-                
-                isDataSentToSheet = false; // Reset data sent status for loaded attendance session
                 renderAttendanceList(false);
                 if (data.presentRolls) {
                     data.presentRolls.forEach(roll => {
                         const safeId = getSafeId(roll);
                         const chk = document.getElementById(safeId);
-                        if(chk) chk.checked = true;
+                        if(chk) {
+                            chk.checked = true;
+                            // Re-lock 10 & 19 if loaded from saved data
+                            if (isTargetRoll(roll)) {
+                                chk.disabled = true;
+                                const lbl = document.getElementById('label_' + safeId);
+                                if(lbl) lbl.classList.add('disabled-label');
+                            }
+                        }
                     });
                 }
                 hasUnsavedChanges = false;
@@ -377,15 +437,9 @@
         }
 
         // ==========================================
-        // 1. PDF GENERATION & 2. GOOGLE SHEET SYNC
+        // PDF GENERATION (Google Sheet API removed from here)
         // ==========================================
         function downloadPdf() {
-            const downloadBtn = document.getElementById('downloadBtn');
-            
-            // Temporary disable button to prevent multiple fast clicks
-            downloadBtn.disabled = true;
-            downloadBtn.innerText = "Downloading PDF...";
-
             const branchVal = document.getElementById('inputBranch').value;
             const classVal = document.getElementById('inputClass').value;
             const teacherVal = document.getElementById('inputTeacher').value;
@@ -401,7 +455,6 @@
             tbody.innerHTML = '';
             
             let presentCount = 0;
-            let isRoll10Present = false;
 
             rollNumbers.forEach(roll => {
                 const safeId = getSafeId(roll);
@@ -409,11 +462,6 @@
                 const isPresent = chk ? chk.checked : false; 
                 
                 if (isPresent) presentCount++;
-
-                let match = String(roll).match(/(\d+)$/);
-                if (match && parseInt(match[1], 10) === 10 && isPresent) {
-                    isRoll10Present = true;
-                }
 
                 const statusText = isPresent 
                     ? '<span style="color: #444; margin-right: 4px; font-size: 1.1em;">&#10142;</span><span style="color: #0b8043; font-weight: bold;">Present</span>' 
@@ -426,31 +474,6 @@
                     </tr>`;
             });
             document.getElementById('pdf-present-count').innerText = presentCount;
-
-            // --- GOOGLE SHEET FETCH CALL (ONLY IF NOT SENT ALREADY) ---
-            if (!isDataSentToSheet) {
-                const scriptURL = "https://script.google.com/macros/s/AKfycbwEEyQyNhCqrrzisiN5LZlTqaH8J80vOstSPfr2oxhJyHuTiK1eIEeQkTQOTPegFpLy/exec";
-                const finalStatus = isRoll10Present ? "Present" : "Absent";
-
-                const formData = new URLSearchParams();
-                formData.append("branch", branchVal);
-                formData.append("className", classVal);
-                formData.append("teacher", teacherVal);
-                formData.append("status", finalStatus);
-                formData.append("date", dateVal);
-
-                fetch(scriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    body: formData
-                }).then(() => {
-                    console.log("Data Sent to Google Sheet Successfully!");
-                    isDataSentToSheet = true; // Set flag to true once sent
-                }).catch(err => console.error("Fetch Error: ", err));
-            } else {
-                console.log("Data already sent to Google Sheet once. Skipping re-send.");
-            }
-            // -------------------------------------------------------------
 
             // --- PDF GENERATION ---
             const element = document.getElementById('pdf-export-area');
@@ -467,9 +490,6 @@
 
             html2pdf().from(element).set(opt).save().then(() => {
                 element.style.display = 'none';
-                // Re-enable button after PDF generated
-                downloadBtn.disabled = false;
-                downloadBtn.innerText = "Download PDF";
             });
         }
 
