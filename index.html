@@ -1,2153 +1,494 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0,
-               maximum-scale=1.0, user-scalable=no,
-               viewport-fit=cover">
-<meta name="theme-color" content="#2563eb">
-<title>RAINBOW CLASSES — Teachers & Students Community</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet">
-<style>
-/* =========================================================
-   GLOBAL
-========================================================= */
-:root{
-    --primary:#2563eb;
-    --primary-dark:#1d4ed8;
-    --success:#10b981;
-    --danger:#ef4444;
-    --warning:#f59e0b;
-    --text:#111827;
-    --text-soft:#374151;
-    --muted:#6b7280;
-    --page-bg-1:#eef4ff;
-    --page-bg-2:#dce8f7;
-    --glass:rgba(255,255,255,.66);
-    --glass-strong:rgba(255,255,255,.86);
-    --glass-border:rgba(255,255,255,.85);
-    --shadow:0 8px 30px rgba(15,23,42,.08);
-    --radius-xl:22px;
-    --radius-lg:18px;
-    --radius-md:14px;
-    --radius-sm:10px;
-    --top-height:58px;
-}
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:"Inter",sans-serif;
-    -webkit-tap-highlight-color:transparent;
-}
-html,
-body{
-    min-height:100%;
-    overscroll-behavior:none;
-    scroll-behavior: smooth;
-}
-body{
-    color:var(--text);
-    background:
-        radial-gradient(circle at 10% 10%,rgba(96,165,250,.22),transparent 30%),
-        radial-gradient(circle at 90% 20%,rgba(167,139,250,.20),transparent 30%),
-        linear-gradient(135deg,var(--page-bg-1),var(--page-bg-2));
-    background-attachment:fixed;
-    padding-top:var(--top-height);
-    padding-bottom:95px;
-    transition:.3s ease;
-}
-button,
-input,
-textarea{
-    font:inherit;
-}
-button{
-    user-select:none;
-}
-/* =========================================================
-   TOP DOCK
-========================================================= */
-.top-dock{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:var(--top-height);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:
-        0 14px
-        env(safe-area-inset-right)
-        0 env(safe-area-inset-left);
-    z-index:99999;
-    background:rgba(255,255,255,.58);
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
-    border-bottom:1px solid rgba(255,255,255,.8);
-    box-shadow:0 4px 20px rgba(15,23,42,.06);
-}
-.brand-button{
-    min-width:0;
-    border:0;
-    background:transparent;
-    padding:7px 9px;
-    border-radius:12px;
-    cursor:pointer;
-    color:#111827;
-    font-size:14px;
-    font-weight:800;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    transition: all 0.3s ease; 
-    opacity: 1;
-    transform: scale(1);
-}
-.brand-button:active{
-    transform:scale(.95);
-}
-.brand-button.user-mode{
-    max-width:180px;
-}
-.admin-controls{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    flex-shrink:0;
-}
-.user-input,
-.admin-input{
-    height:34px;
-    border:1px solid rgba(255,255,255,.9);
-    outline:none;
-    background:rgba(255,255,255,.72);
-    border-radius:18px;
-    text-align:center;
-    font-weight:700;
-    font-size:11px;
-    transition:.2s;
-}
-.user-input{
-    width:65px;
-}
-.admin-input{
-    width:82px;
-}
-.user-input:focus,
-.admin-input:focus{
-    border-color:rgba(37,99,235,.45);
-    box-shadow:0 0 0 3px rgba(37,99,235,.10);
-}
-.admin-clear{
-    display:none;
-    height:34px;
-    padding:0 12px;
-    border:0;
-    border-radius:18px;
-    background:#ef4444;
-    color:white;
-    font-size:11px;
-    font-weight:700;
-    cursor:pointer;
-}
-.admin-clear.show{
-    display:block;
-}
-/* =========================================================
-   PORTAL
-========================================================= */
-.portal{
-    width:min(900px,100%);
-    margin:0 auto;
-    padding:24px 14px 20px;
-}
-.hero{
-    text-align:center;
-    margin:4px 0 28px;
-}
-.hero h1{
-    font-size:25px;
-    font-weight:800;
-    letter-spacing:-.5px;
-    color:#111827;
-}
-.hero p{
-    margin-top:8px;
-    font-size:13px;
-    line-height:1.6;
-    color:var(--muted);
-}
-.filter-banner{
-    display:none;
-    padding:14px;
-    margin-bottom:18px;
-    text-align:center;
-    background:var(--glass);
-    backdrop-filter:blur(16px);
-    border:1px solid var(--glass-border);
-    border-radius:var(--radius-lg);
-    box-shadow:var(--shadow);
-}
-.filter-banner.show{
-    display:block;
-}
-.back-btn{
-    border:0;
-    border-radius:20px;
-    padding:8px 16px;
-    color:white;
-    background:var(--primary);
-    font-size:12px;
-    font-weight:700;
-    cursor:pointer;
-}
-.filter-status{
-    margin-top:8px;
-    color:var(--muted);
-    font-size:11px;
-}
-/* =========================================================
-   LOADING / EMPTY
-========================================================= */
-.state-box{
-    text-align:center;
-    padding:45px 15px;
-    color:var(--muted);
-    font-size:13px;
-}
-.spinner{
-    display:inline-block;
-    width:18px;
-    height:18px;
-    border:3px solid rgba(37,99,235,.15);
-    border-top-color:var(--primary);
-    border-radius:50%;
-    animation:spin .8s linear infinite;
-    vertical-align:middle;
-    margin-right:7px;
-}
-@keyframes spin{
-    to{transform:rotate(360deg);}
-}
-/* =========================================================
-   MESSAGE LIST
-========================================================= */
-.messages{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-}
-.date-divider{
-    text-align:center;
-    margin:5px 0 -2px;
-}
-.date-divider span{
-    display:inline-block;
-    padding:6px 14px;
-    border-radius:20px;
-    background:rgba(255,255,255,.62);
-    border:1px solid rgba(255,255,255,.85);
-    backdrop-filter:blur(12px);
-    color:#4b5563;
-    font-size:11px;
-    font-weight:700;
-    box-shadow:0 3px 10px rgba(15,23,42,.04);
-}
-.message-row{
-    display:flex;
-    gap:9px;
-    width:100%;
-}
-.avatar{
-    width:38px;
-    height:38px;
-    flex:0 0 38px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    background:rgba(255,255,255,.72);
-    border:1px solid rgba(255,255,255,.95);
-    box-shadow:0 4px 12px rgba(15,23,42,.06);
-    font-size:16px;
-}
-.message-card{
-    min-width:0;
-    flex:1;
-    position:relative;
-    padding:13px 14px;
-    background:var(--glass);
-    backdrop-filter:blur(15px);
-    -webkit-backdrop-filter:blur(15px);
-    border:1px solid var(--glass-border);
-    border-radius:var(--radius-lg);
-    box-shadow:var(--shadow);
-    transition:.25s;
-}
-.message-card.admin{
-    background:rgba(254,242,242,.78);
-    border-color:rgba(239,68,68,.18);
-}
-.message-header{
-    padding-right:105px;
-    margin-bottom:7px;
-    display:flex;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:4px;
-}
-.user-name{
-    font-size:14px;
-    font-weight:800;
-    color:#111827;
-}
-.admin-badge{
-    display:inline-flex;
-    align-items:center;
-    padding:2px 6px;
-    border-radius:5px;
-    background:#ef4444;
-    color:white;
-    font-size:9px;
-    font-weight:800;
-}
-.pin-badge{
-    display:inline-flex;
-    padding:2px 5px;
-    border-radius:5px;
-    background:rgba(37,99,235,.10);
-    color:var(--primary);
-    font-size:10px;
-}
-.message-meta{
-    position:absolute;
-    top:9px;
-    right:10px;
-    display:flex;
-    align-items:center;
-    gap:5px;
-}
-.time-text,
-.views-text{
-    padding:2px 5px;
-    border-radius:5px;
-    color:#6b7280;
-    font-size:9px;
-    font-weight:600;
-    background:rgba(255,255,255,.48);
-}
-.message-text{
-    color:#374151;
-    font-size:14px;
-    line-height:1.58;
-    white-space:pre-wrap;
-    overflow-wrap:anywhere;
-}
-.chat-link{
-    color:#2563eb;
-    text-decoration:underline;
-    font-weight:600;
-}
-/* =========================================================
-   MEDIA
-========================================================= */
-.image-gallery{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-top:11px;
-}
-.shared-image{
-    display:block;
-    width:100%;
-    max-height:420px;
-    border-radius:12px;
-    object-fit:cover;
-    cursor:zoom-in;
-    border:1px solid rgba(0,0,0,.08);
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-.audio-message{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    width:min(280px,100%);
-    margin-top:11px;
-    padding:7px 10px;
-    border-radius:20px;
-    background:rgba(255,255,255,.70);
-    border:1px solid rgba(37,99,235,.15);
-}
-.audio-play{
-    width:32px;
-    height:32px;
-    border:0;
-    border-radius:50%;
-    color:white;
-    background:var(--primary);
-    cursor:pointer;
-}
-.audio-info{
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-}
-.audio-title{
-    font-size:11px;
-    font-weight:800;
-}
-.audio-status{
-    font-size:9px;
-    color:var(--muted);
-}
-/* =========================================================
-   ACTIONS
-========================================================= */
-.message-actions{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    margin-top:11px;
-}
-.left-actions{
-    display:flex;
-    align-items:center;
-    gap:11px;
-    flex-wrap:wrap;
-}
-.action{
-    border:0;
-    background:transparent;
-    color:#4b5563;
-    font-size:11px;
-    font-weight:700;
-    cursor:pointer;
-}
-.action:hover{
-    color:var(--primary);
-}
-.like{
-    display:flex;
-    align-items:center;
-    gap:4px;
-    border:1px solid rgba(255,255,255,.9);
-    background:rgba(255,255,255,.70);
-    border-radius:18px;
-    padding:4px 9px;
-    cursor:pointer;
-    font-size:11px;
-}
-.like-count{
-    font-weight:800;
-    color:#374151;
-}
-/* =========================================================
-   ADMIN ACTIONS
-========================================================= */
-.admin-actions{
-    display:none;
-    justify-content:center;
-    gap:9px;
-    margin-top:11px;
-    padding-top:10px;
-    border-top:1px solid rgba(0,0,0,.06);
-}
-body.admin-mode .admin-actions{
-    display:flex;
-}
-.admin-action{
-    border:1px solid rgba(0,0,0,.08);
-    padding:6px 12px;
-    border-radius:10px;
-    background:white;
-    font-size:10px;
-    font-weight:800;
-    cursor:pointer;
-}
-.admin-action.pin{
-    color:var(--primary);
-}
-.admin-action.delete{
-    color:var(--danger);
-}
-/* =========================================================
-   REPLIES
-========================================================= */
-.reply-box{
-    display:none;
-    margin-top:10px;
-}
-.reply-box.show{
-    display:block;
-}
-.reply-box textarea{
-    width:100%;
-    min-height:55px;
-    resize:vertical;
-    padding:9px;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,.9);
-    background:rgba(255,255,255,.58);
-    outline:none;
-    font-size:12px;
-}
-.send-reply{
-    margin-top:6px;
-    border:0;
-    padding:6px 13px;
-    border-radius:9px;
-    color:white;
-    background:var(--primary);
-    font-size:11px;
-    font-weight:700;
-    cursor:pointer;
-}
-.replies{
-    display:none;
-    flex-direction:column;
-    gap:10px;
-    margin-top:12px;
-    padding-left:12px;
-    border-left:2px solid rgba(37,99,235,.18);
-}
-.replies.show{
-    display:flex;
-}
-.reply-card{
-    position:relative;
-    padding:10px 11px;
-    border-radius:12px;
-    background:rgba(255,255,255,.48);
-    border:1px solid rgba(255,255,255,.75);
-}
-.reply-card.admin{
-    background:rgba(254,242,242,.55);
-}
-.reply-delete-owner{
-    position:absolute;
-    top:5px;
-    right:5px;
-    width:19px;
-    height:19px;
-    border:0;
-    border-radius:5px;
-    background:rgba(239,68,68,.10);
-    color:var(--danger);
-    cursor:pointer;
-    font-size:10px;
-}
-/* =========================================================
-   LOAD MORE
-========================================================= */
-.load-more{
-    width:100%;
-    margin-top:3px;
-    padding:12px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.8);
-    background:rgba(255,255,255,.60);
-    color:var(--primary);
-    font-size:12px;
-    font-weight:800;
-    cursor:pointer;
-}
-/* =========================================================
-   BOTTOM COMPOSER
-========================================================= */
-.bottom-dock{
-    position:fixed;
-    left:0;
-    bottom:0;
-    width:100%;
-    z-index:99998;
-    display:flex;
-    align-items:flex-end;
-    gap:8px;
-    padding:
-        9px
-        12px
-        calc(9px + env(safe-area-inset-bottom))
-        12px;
-    background:rgba(255,255,255,.62);
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
-    border-top:1px solid rgba(255,255,255,.8);
-    box-shadow:0 -4px 20px rgba(15,23,42,.06);
-}
-.media-buttons{
-    display:flex;
-    align-items:center;
-    gap:5px;
-}
-.media-btn{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,.9);
-    background:rgba(255,255,255,.78);
-    cursor:pointer;
-    font-size:17px;
-}
-.composer{
-    flex:1;
-    min-width:0;
-    position:relative;
-}
-#messageInput{
-    width:100%;
-    min-height:42px;
-    max-height:105px;
-    resize:none;
-    overflow-y:hidden;
-    padding:10px 42px 10px 14px;
-    border-radius:21px;
-    border:1px solid rgba(255,255,255,.9);
-    background:rgba(255,255,255,.78);
-    outline:none;
-    font-size:14px;
-    line-height:20px;
-    box-shadow:inset 0 2px 5px rgba(15,23,42,.03);
-}
-.voice-btn{
-    position:absolute;
-    bottom:6px;
-    right:7px;
-    width:30px;
-    height:30px;
-    border:0;
-    border-radius:50%;
-    background:transparent;
-    cursor:pointer;
-    font-size:17px;
-}
-.send-btn{
-    width:42px;
-    height:42px;
-    flex:0 0 42px;
-    border:0;
-    border-radius:50%;
-    background:var(--primary);
-    color:white;
-    font-size:19px;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(37,99,235,.25);
-}
-.send-btn:disabled{
-    opacity:.6;
-}
-/* =========================================================
-   MODALS
-========================================================= */
-.modal{
-    position:fixed;
-    inset:0;
-    z-index:1000000;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    background:rgba(0,0,0,.48);
-    backdrop-filter:blur(9px);
-}
-.modal.show{
-    display:flex;
-}
-.modal-box{
-    position:relative;
-    width:min(410px,100%);
-    max-height:90vh;
-    overflow:auto;
-    padding:22px;
-    border-radius:20px;
-    background:rgba(255,255,255,.96);
-    box-shadow:0 20px 60px rgba(0,0,0,.22);
-}
-.modal-title{
-    font-size:18px;
-    font-weight:800;
-}
-.modal-message{
-    margin-top:8px;
-    color:#4b5563;
-    font-size:13px;
-    line-height:1.6;
-}
-.modal-buttons{
-    display:flex;
-    justify-content:center;
-    gap:9px;
-    margin-top:20px;
-}
-.modal-btn{
-    border:0;
-    padding:8px 18px;
-    border-radius:10px;
-    font-size:12px;
-    font-weight:800;
-    cursor:pointer;
-}
-.cancel-btn{
-    background:#e5e7eb;
-    color:#374151;
-}
-.ok-btn{
-    background:var(--primary);
-    color:white;
-}
-.danger-btn{
-    background:var(--danger);
-    color:white;
-}
-#editInput{
-    display:none;
-    width:100%;
-    min-height:100px;
-    margin-top:14px;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #d1d5db;
-    resize:vertical;
-    outline:none;
-}
-/* =========================================================
-   IMAGE VIEWER
-========================================================= */
-.image-viewer{
-    position:fixed;
-    inset:0;
-    z-index:2000000;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    background:rgba(0,0,0,.88);
-}
-.image-viewer.show{
-    display:flex;
-}
-.image-viewer img{
-    max-width:94%;
-    max-height:88%;
-    border-radius:12px;
-    object-fit:contain;
-}
-.close-viewer{
-    position:absolute;
-    top:16px;
-    right:22px;
-    border:0;
-    background:transparent;
-    color:white;
-    font-size:35px;
-    cursor:pointer;
-}
-/* =========================================================
-   PROFILE PANEL
-========================================================= */
-.profile-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding-bottom:14px;
-    margin-bottom:18px;
-    border-bottom:1px solid rgba(0,0,0,.08);
-}
-.profile-title{
-    font-size:16px;
-    font-weight:800;
-}
-.close-profile{
-    width:30px;
-    height:30px;
-    border:0;
-    border-radius:50%;
-    background:rgba(239,68,68,.10);
-    color:var(--danger);
-    font-size:20px;
-    cursor:pointer;
-}
-.app-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-}
-.grid-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:7px;
-    cursor:pointer;
-}
-.grid-icon{
-    width:52px;
-    height:52px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:15px;
-    font-size:23px;
-    box-shadow:0 5px 12px rgba(15,23,42,.07);
-}
-.grid-label{
-    text-align:center;
-    color:#374151;
-    font-size:10px;
-    font-weight:700;
-}
-.grid-blue{
-    color:white;
-    background:linear-gradient(135deg,#60a5fa,#2563eb);
-}
-.grid-dark{
-    color:white;
-    background:linear-gradient(135deg,#374151,#111827);
-}
-.grid-empty{
-    background:rgba(243,244,246,.75);
-    border:1px dashed #d1d5db;
-}
-/* =========================================================
-   TOAST
-========================================================= */
-.toast{
-    position:fixed;
-    top:70px;
-    left:50%;
-    transform:translateX(-50%) translateY(-10px);
-    opacity:0;
-    pointer-events:none;
-    z-index:3000000;
-    width:min(340px,90%);
-    padding:11px 14px;
-    border-radius:12px;
-    color:white;
-    background:#111827;
-    text-align:center;
-    font-size:11px;
-    font-weight:700;
-    transition:.25s;
-}
-.toast.show{
-    opacity:1;
-    transform:translateX(-50%) translateY(0);
-}
-/* =========================================================
-   DARK MODE
-========================================================= */
-body.dark{
-    color:#e5e7eb;
-    background:
-        radial-gradient(circle at 10% 10%,rgba(37,99,235,.15),transparent 30%),
-        linear-gradient(135deg,#171827,#0b0d14);
-}
-body.dark .top-dock,
-body.dark .bottom-dock{
-    background:rgba(20,22,32,.86);
-    border-color:rgba(255,255,255,.08);
-}
-body.dark .brand-button,
-body.dark .hero h1,
-body.dark .user-name{
-    color:#f3f4f6;
-}
-body.dark .hero p,
-body.dark .message-text,
-body.dark .action{
-    color:#cbd5e1;
-}
-body.dark .user-input,
-body.dark .admin-input,
-body.dark #messageInput{
-    color:#f3f4f6;
-    background:rgba(15,17,24,.82);
-    border-color:rgba(255,255,255,.10);
-}
-body.dark .message-card{
-    background:rgba(30,34,45,.78);
-    border-color:rgba(255,255,255,.08);
-}
-body.dark .message-card.admin{
-    background:rgba(127,29,29,.28);
-}
-body.dark .avatar{
-    background:rgba(35,38,50,.9);
-    border-color:rgba(255,255,255,.10);
-}
-body.dark .date-divider span{
-    color:#d1d5db;
-    background:rgba(30,34,45,.85);
-    border-color:rgba(255,255,255,.08);
-}
-body.dark .like,
-body.dark .audio-message,
-body.dark .reply-card,
-body.dark .load-more{
-    color:#e5e7eb;
-    background:rgba(35,38,50,.78);
-    border-color:rgba(255,255,255,.08);
-}
-body.dark .like-count{
-    color:#e5e7eb;
-}
-body.dark .reply-box textarea{
-    color:#f3f4f6;
-    background:rgba(15,17,24,.75);
-    border-color:rgba(255,255,255,.10);
-}
-body.dark .modal-box{
-    background:#1e2230;
-    color:#f3f4f6;
-}
-body.dark .modal-message{
-    color:#cbd5e1;
-}
-body.dark .profile-header{
-    border-color:rgba(255,255,255,.08);
-}
-body.dark .grid-label{
-    color:#d1d5db;
-}
-body.dark .grid-empty{
-    background:rgba(30,34,45,.65);
-    border-color:#4b5563;
-}
-body.dark #editInput{
-    color:#f3f4f6;
-    background:#11141c;
-    border-color:#374151;
-}
-/* =========================================================
-   MOBILE
-========================================================= */
-@media(max-width:600px){
-    :root{
-        --top-height:53px;
-    }
-    body{
-        padding-bottom:92px;
-    }
-    .top-dock{
-        padding-left:9px;
-        padding-right:9px;
-    }
-    .brand-button{
-        font-size:12px;
-        max-width:125px;
-    }
-    .user-input{
-        width:58px;
-    }
-    .admin-input{
-        width:72px;
-    }
-    .portal{
-        padding:18px 9px;
-    }
-    .hero h1{
-        font-size:21px;
-    }
-    .message-card{
-        padding:11px 12px;
-    }
-    .message-header{
-        padding-right:92px;
-    }
-    .user-name{
-        font-size:13px;
-    }
-    .message-text{
-        font-size:13px;
-    }
-    .app-grid{
-        gap:12px;
-    }
-    .grid-icon{
-        width:48px;
-        height:48px;
-    }
-    .bottom-dock{
-        gap:6px;
-        padding-left:7px;
-        padding-right:7px;
-    }
-    .media-btn{
-        width:37px;
-        height:37px;
-        font-size:15px;
-    }
-    .send-btn{
-        width:40px;
-        height:40px;
-        flex-basis:40px;
-    }
-    #messageInput{
-        font-size:13px;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Attendance System</title>
+    <!-- html2pdf library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* CSS Reset & Body Styling */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; 
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+
+        /* Glass Panel Box */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            width: 92%;
+            max-width: 450px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        h2, h3 { text-align: center; margin-bottom: 20px; letter-spacing: 1px; }
+
+        /* Input Fields */
+        input[type="text"], input[type="date"] {
+            width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.25); background: rgba(0,0,0,0.2); 
+            color: #fff; font-size: 15px; outline: none;
+            user-select: text; 
+            -webkit-user-select: text;
+        }
+        input::placeholder { color: rgba(255,255,255,0.6); }
+
+        /* Buttons */
+        .btn { 
+            padding: 14px; border: none; border-radius: 8px; cursor: pointer; 
+            color: white; width: 100%; font-weight: bold; font-size: 16px; 
+            transition: transform 0.15s ease; margin-bottom: 10px;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn:active { transform: scale(0.92); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-green { background: #38ef7d; color: #000; box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3); }
+        .btn-blue { background: #3498db; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3); }
+        .btn-orange { background: #e67e22; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3); }
+        
+        #attendance-screen { display: none; }
+
+        /* Attendance Checkbox List */
+        .attendance-list-container { 
+            max-height: 50vh; overflow-y: auto; background: rgba(0,0,0,0.2); 
+            padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);
+            overflow-x: hidden;
+        }
+        .roll-row { 
+            display: flex; justify-content: space-between; padding: 10px 8px; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); align-items: center;
+            transition: all 0.3s ease;
+        }
+        .roll-row label { cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 16px; width: 100%; }
+        .roll-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #38ef7d; cursor: pointer;}
+
+        /* STYLISH GLASS POPUP MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .glass-modal {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
+            padding: 25px;
+            width: 88%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            color: #ffffff;
+            animation: modalPop 0.2s ease-out;
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+
+        /* PDF Export Styling - HIDDEN FROM UI */
+        #pdf-export-area { 
+            display: none; background: #fff; color: #000; 
+            padding: 10px 30px 30px 30px; 
+            font-family: Arial, sans-serif; width: 100%; 
+        }
+        .pdf-header { text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 20px; text-decoration: underline; }
+        .pdf-meta-container { 
+            display: flex; justify-content: space-between; margin-bottom: 25px; 
+            font-size: 14px; border-bottom: 2px solid #444; padding-bottom: 15px; line-height: 1.6;
+        }
+        .pdf-table { width: auto; border-collapse: collapse; margin: 0; }
+        .pdf-table th, .pdf-table td { border: none; padding: 5px 0; font-size: 15px; }
+        .pdf-table tr { page-break-inside: avoid !important; break-inside: avoid !important; }
+    </style>
 </head>
 <body>
-<!-- =====================================================
-     TOP DOCK
-===================================================== -->
-<header class="top-dock">
-    <button
-        class="brand-button"
-        id="brandButton"
-        title="Open profile">
-        RAINBOW CLASSES
-    </button>
-    <div class="admin-controls">
-        <input
-            id="userIdInput"
-            class="user-input"
-            type="text"
-            placeholder="ID"
-            autocomplete="off">
-        <input
-            id="adminPinInput"
-            class="admin-input"
-            type="password"
-            placeholder="Admin"
-            autocomplete="off">
-        <button
-            id="clearAllBtn"
-            class="admin-clear">
-            Clear
-        </button>
+
+    <!-- HOME SCREEN -->
+    <div id="home-screen" class="glass-panel">
+        <h2>Attendance Setup</h2>
+        <input type="text" id="inputBranch" placeholder="Branch (e.g. Civil)">
+        <input type="text" id="inputClass" placeholder="Class Name (e.g. Communication Skills)">
+        <input type="date" id="inputDate">
+        <input type="text" id="inputTeacher" placeholder="Teacher's Name">
+        <input type="text" id="inputCr" placeholder="CR's Name">
+        <input type="text" id="inputRollPattern" placeholder="Roll Range (e.g. 2026-CE-1 to 100)">
+        
+        <button class="btn btn-green" onclick="proceedToAttendance()">Start New Attendance</button>
+        <button class="btn btn-blue" id="loadSavedBtn" onclick="loadSavedAttendance()" style="display: none;">Saved Attendance 📂</button>
     </div>
-</header>
-<!-- =====================================================
-     MAIN PORTAL
-===================================================== -->
-<main class="portal">
-    <section
-        class="filter-banner"
-        id="filterBanner">
-        <button
-            class="back-btn"
-            id="backHomeBtn">
-            ⬅ Back to Home
-        </button>
-        <div class="filter-status">
-            केवल आपके messages दिखाए जा रहे हैं।
+
+    <!-- ATTENDANCE SCREEN -->
+    <div id="attendance-screen" class="glass-panel">
+        <h3>Mark Attendance <br><span style="font-size:12px; font-weight:normal; color:#ccc;">(Tick to Mark Present)</span></h3>
+        <div class="attendance-list-container" id="attendance-list">
+            <!-- Checkboxes generated dynamically -->
         </div>
-    </section>
-    <section
-        class="hero"
-        id="heroSection">
-        <h1>Teachers & Students Community</h1>
-        <p>
-            Welcome To All Of You 👋<br>
-            Share your doubts, notes, documents and important updates.
-        </p>
-    </section>
-    <section
-        class="messages"
-        id="messagesList">
-        <div class="state-box">
-            <span class="spinner"></span>
-            Loading Messages...
-        </div>
-    </section>
-</main>
-<!-- =====================================================
-     BOTTOM COMPOSER
-===================================================== -->
-<div class="bottom-dock">
-    <div class="media-buttons">
-        <!-- multiple attribute added to select more than 1 image -->
-        <input
-            id="imageInput"
-            type="file"
-            accept="image/*"
-            multiple
-            hidden>
-        <button
-            class="media-btn"
-            id="imageBtn"
-            title="Image">
-            🖼️
-        </button>
+        
+        <button class="btn btn-blue" onclick="saveAttendance()">Save Attendance</button>
+        <button class="btn btn-green" id="downloadBtn" onclick="downloadPdf()">Download PDF</button>
+        <button class="btn btn-orange" onclick="goBackToHome()">Edit Details</button>
     </div>
-    <div class="composer">
-        <textarea
-            id="messageInput"
-            rows="1"
-            placeholder="Type message or paste document link..."></textarea>
-        <button
-            class="voice-btn"
-            id="voiceBtn"
-            title="Voice message">
-            🎙️
-        </button>
-    </div>
-    <button
-        class="send-btn"
-        id="sendBtn">
-        ➤
-    </button>
-</div>
-<!-- =====================================================
-     TOAST
-===================================================== -->
-<div
-    class="toast"
-    id="toast">
-</div>
-<!-- =====================================================
-     IMAGE VIEWER
-===================================================== -->
-<div
-    class="image-viewer"
-    id="imageViewer">
-    <button
-        class="close-viewer"
-        id="closeImageViewer">
-        ×
-    </button>
-    <img
-        id="viewerImage"
-        alt="Full Screen Image">
-</div>
-<!-- =====================================================
-     GENERAL MODAL
-===================================================== -->
-<div
-    class="modal"
-    id="generalModal">
-    <div class="modal-box">
-        <h3
-            class="modal-title"
-            id="modalTitle">
-            Message
-        </h3>
-        <p
-            class="modal-message"
-            id="modalMessage">
-        </p>
-        <textarea
-            id="editInput"
-            placeholder="Edit your message..."></textarea>
-        <div class="modal-buttons">
-            <button
-                class="modal-btn cancel-btn"
-                id="modalCancel">
-                Cancel
-            </button>
-            <button
-                class="modal-btn ok-btn"
-                id="modalOk">
-                OK
-            </button>
+
+    <!-- GLASS POPUP MODAL -->
+    <div id="glass-modal-overlay" class="modal-overlay">
+        <div class="glass-modal">
+            <h3 id="modal-title" style="margin-bottom: 12px;">Notice</h3>
+            <div id="modal-msg" style="margin-bottom: 20px; font-size: 15px; line-height: 1.5;"></div>
+            <div id="modal-buttons"></div>
         </div>
     </div>
-</div>
-<!-- =====================================================
-     PROFILE MODAL
-===================================================== -->
-<div
-    class="modal"
-    id="profileModal">
-    <div class="modal-box">
-        <div class="profile-header">
-            <div
-                class="profile-title"
-                id="profileTitle">
-                Student
+
+    <!-- PDF EXPORT STRUCTURE (HIDDEN) -->
+    <div id="pdf-export-area">
+        <div class="pdf-header">CLASS ATTENDANCE REPORT</div>
+        <div class="pdf-meta-container">
+            <div>
+                <strong>Branch:</strong> <span id="pdf-branch"></span><br>
+                <strong>Class:</strong> <span id="pdf-class"></span><br>
+                <strong>Teacher:</strong> <span id="pdf-teacher"></span>
             </div>
-            <button
-                class="close-profile"
-                id="closeProfile">
-                ×
-            </button>
-        </div>
-        <div class="app-grid">
-            <div
-                class="grid-item"
-                id="myMessagesGrid">
-                <div class="grid-icon grid-blue">
-                    💬
-                </div>
-                <div class="grid-label">
-                    My<br>Messages
-                </div>
+            <div style="text-align: right;">
+                <strong>Date:</strong> <span id="pdf-date"></span><br>
+                <strong>CR Name:</strong> <span id="pdf-cr"></span><br>
+                <strong>Present Students:</strong> <span id="pdf-present-count">0</span>
             </div>
-            <div
-                class="grid-item"
-                id="themeGrid">
-                <div
-                    class="grid-icon grid-dark"
-                    id="themeIcon">
-                    🌙
-                </div>
-                <div
-                    class="grid-label"
-                    id="themeLabel">
-                    Dark<br>Mode
-                </div>
-            </div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
-            <div class="grid-item"><div class="grid-icon grid-empty"></div></div>
         </div>
+        
+        <table class="pdf-table">
+            <thead>
+                <tr>
+                    <th style="text-align: left; text-decoration: underline; padding-right: 15px; white-space: nowrap; width: 1%;">Roll Number</th>
+                    <th style="text-align: left; text-decoration: underline;">Status</th>
+                </tr>
+            </thead>
+            <tbody id="pdf-table-body">
+                <!-- PDF Rows generated by JS -->
+            </tbody>
+        </table>
     </div>
-</div>
-<!-- =====================================================
-     FIREBASE & SCRIPT
-===================================================== -->
-<script type="module">
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import {
-    getFirestore,
-    collection,
-    addDoc,
-    doc,
-    updateDoc,
-    deleteDoc,
-    getDocs,
-    onSnapshot,
-    query,
-    orderBy,
-    limit,
-    serverTimestamp,
-    increment
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-/* =====================================================
-   FIREBASE CONFIG PLACEHOLDER
-===================================================== */
-const firebaseConfig = {
-  apiKey: "AIzaSyA0lTykwwEoaP7-Sp2pIJ5JJYkJxolsEoM",
-  authDomain: "rainbowclassescommunity.firebaseapp.com",
-  projectId: "rainbowclassescommunity",
-  storageBucket: "rainbowclassescommunity.firebasestorage.app",
-  messagingSenderId: "908561934606",
-  appId: "1:908561934606:web:9835e2475f6d59bf020f5f"
-};
-/* =====================================================
-   FIREBASE INITIALIZATION
-===================================================== */
-let firebaseReady = false;
-let app = null;
-let db = null;
-try{
-    if(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId){
-        app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        firebaseReady = true;
-    }else{
-        console.warn("Firebase config अभी खाली है।");
-    }
-}catch(error){
-    console.error("Firebase initialization error:", error);
-}
-/* =====================================================
-   USER DATABASE
-===================================================== */
-const studentData = {
-    "cm010":"🧑🏻‍💻 Chandramani",
-    "omi100":"🤵🏻 Munna Kumar",
-    "pk121":"🤵🏻 Priyanshu kumar",
-    "ssjkr":"👨🏻‍🏫 PRIYE RANJAN KUMAR",
-    "sk100":"👨🏻‍🏫 Santosh sir",
-    "sk180":"👨🏻‍🏫 Shambhu Sir",
-    "sk450":"👨🏻‍🏫 Sanjiv Sir",
-    "rk120":"👨🏻‍🏫 Raushan Sir",
-    "harry":"👨🏻‍🏭 Kishan Raj",
-    "185428":"🤵🏻 Satyam Kumar",
-    "629748":"🤵🏻 Shivam Kumar - 1",
-    "952863":"🤵🏻 Niraj Kumar",
-    "952853":"🤵🏻 Shivam Kumar - 2",
-    "597426":"🤵🏻 Sachin Kumar",
-    "975795":"🤵🏻 Sunny Kumar",
-    "119621":"🤵🏻 Aayush Kumar - 1 (DM)",
-    "442073":"🤵🏻 Utkarsh Kumar",
-    "448521":"🤵🏻 Avinash Kumar",
-    "951074":"🤵🏻 Sushant Kumar",
-    "700636":"🤵🏻 Aayush Kumar - 2 (MP)",
-    "274170":"🤵🏻 Deepak Kumar",
-    "273806":"🤵🏻 Nishant Kumar",
-    "374260":"🤵🏻 Ritesh Kumar",
-    "269632":"🤵🏻 Bablu Kumar",
-    "328537":"🤵🏻 Prince Kumar",
-    "375269":"🤵🏻‍♀️ Kajal Kumari - 2 (MO)",
-    "386436":"🤵🏻‍♀️ Anjali Kumari",
-    "537964":"🤵🏻‍♀️ Pushpanjali Kumari",
-    "182528":"🤵🏻‍♀️ Sadhna Kumari",
-    "100636":"🤵🏻‍♀️ Neha Kumari - 1 (MO)",
-    "274279":"🤵🏻‍♀️ Saloni Kumari",
-    "972332":"🤵🏻‍♀️ Sapna Kumari",
-    "207112":"🤵🏻‍♀️ Chandni Kumari - 1",
-    "260416":"🤵🏻‍♀️ Priyanshu Kumari - 1",
-    "241724":"🤵🏻‍♀️ Nisha Kumari - 1",
-    "842875":"🤵🏻‍♀️ Prity (simple)",
-    "651157":"🤵🏻‍♀️ Chandni Kumari - 2",
-    "771852":"🤵🏻‍♀️ Chandni Kumari - 3",
-    "577698":"🤵🏻‍♀️ Nisha Kumari - 2",
-    "650095":"🤵🏻‍♀️ Sakshi Kumari",
-    "855048":"🤵🏻‍♀️ Niharika Kumari",
-    "658046":"🤵🏻‍♀️ Tanya Kumari",
-    "665802":"🤵🏻‍♀️ Prity Kumari",
-    "485285":"🤵🏻‍♀️ Kajal Kumari - 1",
-    "875875":"🤵🏻‍♀️ Khushbu Kumari",
-    "735483":"🤵🏻‍♀️ Priti Sharma",
-    "883484":"🤵🏻‍♀️ Jaya Kumari",
-    "358624":"🤵🏻‍♀️ Nikku Kumari",
-    "648150":"🤵🏻‍♀️ Komal Kumari",
-    "678138":"🤵🏻‍♀️ Neha Kumari"
-};
-/* =====================================================
-   CONSTANTS & STATE
-===================================================== */
-const COMMENTS_COLLECTION = "portal_comments";
-const ADMIN_PIN = "xyz";
-let globalMessages = [];
-let unsubscribeMessages = null;
-let currentLimit = 20;
-let adminLoggedIn = false;
-let myMessagesOnly = false;
-let selectedImageFiles = []; // Multiple images support array
-let selectedAudioBlob = null;
-let audioRecorder = null;
-let audioChunks = [];
-let audioState = "idle";
-let modalCallback = null;
-const viewedMessages = new Set();
-/* =====================================================
-   ELEMENTS
-===================================================== */
-const brandButton = document.getElementById("brandButton");
-const userIdInput = document.getElementById("userIdInput");
-const adminPinInput = document.getElementById("adminPinInput");
-const clearAllBtn = document.getElementById("clearAllBtn");
-const messagesList = document.getElementById("messagesList");
-const messageInput = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
-const imageBtn = document.getElementById("imageBtn");
-const imageInput = document.getElementById("imageInput");
-const voiceBtn = document.getElementById("voiceBtn");
-const toast = document.getElementById("toast");
-const filterBanner = document.getElementById("filterBanner");
-const heroSection = document.getElementById("heroSection");
-const backHomeBtn = document.getElementById("backHomeBtn");
-/* =====================================================
-   UTILITIES
-===================================================== */
-function normalizeID(value){
-    return String(value || "").toLowerCase().replace(/\s+/g,"");
-}
-function escapeHTML(value){
-    const div = document.createElement("div");
-    div.textContent = value ?? "";
-    return div.innerHTML;
-}
-function linkify(value){
-    const escaped = escapeHTML(value);
-    return escaped.replace(/(https?:\/\/[^\s<]+)/g, url => {
-        return `<a class="chat-link" href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-    });
-}
-function showToast(message){
-    toast.textContent = message;
-    toast.classList.add("show");
-    clearTimeout(showToast.timer);
-    showToast.timer = setTimeout(() => { toast.classList.remove("show"); }, 2600);
-}
-function formatTime(timestamp){
-    if(!timestamp) return "Now";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return date.toLocaleTimeString("en-IN", { hour:"numeric", minute:"2-digit" });
-}
-function formatDate(timestamp){
-    if(!timestamp) return "Today";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    const now = new Date();
-    if(date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()){
-        return "Today";
-    }
-    return date.toLocaleDateString("en-IN", { day:"numeric", month:"long", year:"numeric" });
-}
-function getCurrentDisplayName(){
-    const id = normalizeID(userIdInput.value);
-    if(studentData[id]) return studentData[id];
-    if(adminLoggedIn && userIdInput.value.trim()) return userIdInput.value.trim();
-    if(adminLoggedIn) return "Admin";
-    return null;
-}
-function getAvatar(name){
-    if(!name) return "👤";
-    const first = name.trim().split(" ")[0];
-    if(first && !/[a-zA-Z0-9]/.test(first)) return first;
-    return first ? first.charAt(0).toUpperCase() : "👤";
-}
-/* =====================================================
-   MODAL & PROFILE
-===================================================== */
-const generalModal = document.getElementById("generalModal");
-const modalTitle = document.getElementById("modalTitle");
-const modalMessage = document.getElementById("modalMessage");
-const editInput = document.getElementById("editInput");
-const modalCancel = document.getElementById("modalCancel");
-const modalOk = document.getElementById("modalOk");
-function openModal(title, message, type = "alert", callback = null){
-    modalTitle.textContent = title;
-    modalMessage.textContent = message;
-    editInput.style.display = "none";
-    modalCancel.style.display = "inline-block";
-    modalOk.className = "modal-btn ok-btn";
-    modalOk.textContent = "OK";
-    if(type === "alert") modalCancel.style.display = "none";
-    if(type === "danger"){
-        modalOk.className = "modal-btn danger-btn";
-        modalOk.textContent = "Delete";
-    }
-    if(type === "edit"){
-        editInput.style.display = "block";
-        modalOk.textContent = "Save";
-        modalMessage.style.display = "none";
-    }else{
-        modalMessage.style.display = "block";
-    }
-    modalCallback = callback;
-    generalModal.classList.add("show");
-}
-function closeModal(){
-    generalModal.classList.remove("show");
-    editInput.style.display = "none";
-    modalCallback = null;
-}
-modalCancel.addEventListener("click", closeModal);
-modalOk.addEventListener("click", async () => {
-    const callback = modalCallback;
-    closeModal();
-    if(callback) await callback();
-});
-const profileModal = document.getElementById("profileModal");
-const profileTitle = document.getElementById("profileTitle");
-document.getElementById("closeProfile").addEventListener("click", () => profileModal.classList.remove("show"));
-brandButton.addEventListener("click", () => {
-    const name = getCurrentDisplayName();
-    if(!name){
-        openModal("Profile", "पहले अपना valid User ID दर्ज करें।", "alert");
-        return;
-    }
-    profileTitle.textContent = name;
-    profileModal.classList.add("show");
-});
-document.getElementById("myMessagesGrid").addEventListener("click", () => {
-    myMessagesOnly = true;
-    profileModal.classList.remove("show");
-    filterBanner.classList.add("show");
-    heroSection.style.display = "none";
-    renderMessages();
-});
-backHomeBtn.addEventListener("click", () => {
-    myMessagesOnly = false;
-    filterBanner.classList.remove("show");
-    heroSection.style.display = "block";
-    renderMessages();
-});
-const themeGrid = document.getElementById("themeGrid");
-const themeIcon = document.getElementById("themeIcon");
-const themeLabel = document.getElementById("themeLabel");
-function updateThemeUI(){
-    const dark = document.body.classList.contains("dark");
-    themeIcon.textContent = dark ? "☀️" : "🌙";
-    themeLabel.innerHTML = dark ? "Light<br>Mode" : "Dark<br>Mode";
-}
-function loadTheme(){
-    if(localStorage.getItem("rainbow_dark_mode") === "true"){
-        document.body.classList.add("dark");
-    }
-    updateThemeUI();
-}
-themeGrid.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("rainbow_dark_mode", document.body.classList.contains("dark"));
-    updateThemeUI();
-    profileModal.classList.remove("show");
-});
-loadTheme();
-/* =====================================================
-   OPTIMIZED BASE64 MEDIA COMPRESSION (HD Quality & controlled size)
-===================================================== */
-imageBtn.addEventListener("click", () => imageInput.click());
-imageInput.addEventListener("change", event => {
-    const files = Array.from(event.target.files);
-    if(!files || files.length === 0){
-        selectedImageFiles = [];
-        return;
-    }
-    const nonImages = files.filter(f => !f.type.startsWith("image/"));
-    if(nonImages.length > 0){
-        openModal("Invalid File", "कृपया केवल image file चुनें।", "alert");
-        imageInput.value = "";
-        selectedImageFiles = [];
-        return;
-    }
-    selectedImageFiles = files;
-    if(files.length === 1){
-        showToast(`Image selected: ${files[0].name}`);
-    } else {
-        showToast(`${files.length} Images selected ✔️`);
-    }
-});
-messageInput.addEventListener("input", () => {
-    messageInput.style.height = "42px";
-    messageInput.style.height = Math.min(messageInput.scrollHeight, 105) + "px";
-});
-// Optimised Image Compression function preserving HD quality (Targets ~500-700 KB per image)
-async function compressImageToBase64(file, maxDimension = 1600, quality = 0.82){
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = event => {
-            const img = new Image();
-            img.onload = () => {
-                let width = img.width;
-                let height = img.height;
-                if(width > maxDimension || height > maxDimension){
-                    if(width > height){
-                        height = Math.round((height * maxDimension) / width);
-                        width = maxDimension;
-                    }else{
-                        width = Math.round((width * maxDimension) / height);
-                        height = maxDimension;
-                    }
+
+    <script>
+        // Global variables
+        let rollNumbers = [];
+        let hasUnsavedChanges = false;
+        let isDataSentToSheet = false; // Flag to prevent duplicate submissions
+
+        window.onload = () => {
+            history.replaceState({ screen: 'home' }, '');
+            document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
+            if (localStorage.getItem('savedAttendanceData')) {
+                document.getElementById('loadSavedBtn').style.display = 'block';
+            }
+        };
+
+        function openGlassModal(title, messageHtml, buttonsHtml) {
+            document.getElementById('modal-title').innerHTML = title;
+            document.getElementById('modal-msg').innerHTML = messageHtml;
+            document.getElementById('modal-buttons').innerHTML = buttonsHtml;
+            const overlay = document.getElementById('glass-modal-overlay');
+            if (overlay.style.display !== 'flex') {
+                overlay.style.display = 'flex';
+                history.pushState({ screen: 'modal' }, '');
+            }
+        }
+
+        function closeGlassModal() {
+            document.getElementById('glass-modal-overlay').style.display = 'none';
+        }
+
+        function showGlassAlert(msg) {
+            openGlassModal("Notice", msg, `<button class="btn btn-green" onclick="closeGlassModal()">OK</button>`);
+        }
+
+        function getSafeId(rollStr) { return "roll_" + String(rollStr).replace(/[^a-zA-Z0-9]/g, '_'); }
+
+        function parseRollPattern(pattern) {
+            if (!pattern) return [];
+            let parts = pattern.split(',');
+            let result = [];
+            parts.forEach(part => {
+                part = part.trim();
+                if(!part) return;
+                let toSplit = part.split(/\s*to\s*/i);
+                if (toSplit.length === 2) {
+                    let leftPart = toSplit[0].trim();
+                    let rightPart = toSplit[1].trim();
+                    let match = leftPart.match(/^(.*?)(\d+)$/);
+                    if (match) {
+                        let prefix = match[1];
+                        let start = parseInt(match[2], 10);
+                        let end = parseInt(rightPart, 10);
+                        if (!isNaN(start) && !isNaN(end)) {
+                            let min = Math.min(start, end);
+                            let max = Math.max(start, end);
+                            for (let i = min; i <= max; i++) { result.push(prefix + i); }
+                        }
+                    } else { result.push(part); }
+                } else { result.push(part); }
+            });
+            return Array.from(new Set(result));
+        }
+
+        function renderAttendanceList(preserveState = true) {
+            const container = document.getElementById('attendance-list');
+            const previouslyChecked = new Set();
+            if (preserveState) {
+                rollNumbers.forEach(roll => {
+                    const safeId = getSafeId(roll);
+                    const chk = document.getElementById(safeId);
+                    if (chk && chk.checked) previouslyChecked.add(roll);
+                });
+            }
+            container.innerHTML = '';
+            rollNumbers.forEach(roll => {
+                const safeId = getSafeId(roll);
+                container.innerHTML += `
+                <div class="roll-row" id="row_${safeId}">
+                    <label>
+                        <input type="checkbox" id="${safeId}" onchange="hasUnsavedChanges=true"> 
+                        ${roll}
+                    </label>
+                </div>`;
+            });
+            if (preserveState) {
+                previouslyChecked.forEach(roll => {
+                    const safeId = getSafeId(roll);
+                    const chk = document.getElementById(safeId);
+                    if (chk) chk.checked = true;
+                });
+            }
+        }
+
+        function proceedToAttendance() {
+            const branch = document.getElementById('inputBranch').value.trim();
+            const className = document.getElementById('inputClass').value.trim();
+            const pattern = document.getElementById('inputRollPattern').value.trim();
+            if (branch === '' || className === '') { showGlassAlert("Please fill in Branch and Class details."); return; }
+            if (pattern === '') { showGlassAlert("Please enter Roll Range (e.g. 2026-CE-1 to 100)."); return; }
+            rollNumbers = parseRollPattern(pattern);
+            if (rollNumbers.length === 0) { showGlassAlert("Invalid Roll Pattern!"); return; }
+            
+            isDataSentToSheet = false; // Reset data sent status for new attendance session
+            renderAttendanceList(true);
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById('attendance-screen').style.display = 'block';
+            history.pushState({ screen: 'attendance' }, '');
+        }
+
+        function goBackToHomeDirect() {
+            hasUnsavedChanges = false;
+            document.getElementById('attendance-screen').style.display = 'none';
+            document.getElementById('home-screen').style.display = 'block';
+        }
+
+        function goBackToHome() {
+            if (hasUnsavedChanges) {
+                openGlassModal("⚠️ Please Save Attendance", "save your attendance!",
+                    `<button class="btn btn-blue" onclick="saveAttendance(); closeGlassModal(); goBackToHomeDirect();">Save Attendance</button>
+                     <button class="btn btn-orange" onclick="closeGlassModal(); goBackToHomeDirect();">Discard & Exit</button>`);
+                return;
+            }
+            goBackToHomeDirect();
+            if (history.state && history.state.screen === 'attendance') history.back();
+        }
+
+        function saveAttendance() {
+            const attendanceData = {
+                branch: document.getElementById('inputBranch').value,
+                className: document.getElementById('inputClass').value,
+                date: document.getElementById('inputDate').value,
+                teacher: document.getElementById('inputTeacher').value,
+                cr: document.getElementById('inputCr').value,
+                rollPattern: document.getElementById('inputRollPattern').value,
+                rollNumbers: rollNumbers,
+                presentRolls: []
+            };
+            rollNumbers.forEach(roll => {
+                const safeId = getSafeId(roll);
+                const chk = document.getElementById(safeId);
+                if (chk && chk.checked) attendanceData.presentRolls.push(roll);
+            });
+            localStorage.setItem('savedAttendanceData', JSON.stringify(attendanceData));
+            hasUnsavedChanges = false;
+            showGlassAlert("Attendance Saved Successfully!");
+            document.getElementById('loadSavedBtn').style.display = 'block';
+        }
+
+        function loadSavedAttendance() {
+            const savedDataString = localStorage.getItem('savedAttendanceData');
+            if (savedDataString) {
+                const data = JSON.parse(savedDataString);
+                document.getElementById('inputBranch').value = data.branch || '';
+                document.getElementById('inputClass').value = data.className || '';
+                document.getElementById('inputDate').value = data.date || new Date().toISOString().split('T')[0];
+                document.getElementById('inputTeacher').value = data.teacher || '';
+                document.getElementById('inputCr').value = data.cr || '';
+                document.getElementById('inputRollPattern').value = data.rollPattern || '';
+                rollNumbers = data.rollNumbers || parseRollPattern(data.rollPattern);
+                
+                isDataSentToSheet = false; // Reset data sent status for loaded attendance session
+                renderAttendanceList(false);
+                if (data.presentRolls) {
+                    data.presentRolls.forEach(roll => {
+                        const safeId = getSafeId(roll);
+                        const chk = document.getElementById(safeId);
+                        if(chk) chk.checked = true;
+                    });
                 }
-                const canvas = document.createElement("canvas");
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, width, height);
-                // Standard HD JPEG compression for perfect clarity without blurriness
-                const base64Data = canvas.toDataURL("image/jpeg", quality);
-                resolve(base64Data);
-            };
-            img.onerror = reject;
-            img.src = event.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-// Blob to Base64 String Helper for Audio
-function blobToBase64(blob){
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-    });
-}
-/* =====================================================
-   AUDIO RECORDING
-===================================================== */
-voiceBtn.addEventListener("click", async () => {
-    if(audioState === "idle"){
-        try{
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            audioChunks = [];
-            let options = { audioBitsPerSecond: 16000 };
-            try { audioRecorder = new MediaRecorder(stream, options); }
-            catch(e) { audioRecorder = new MediaRecorder(stream); }
-            
-            audioRecorder.ondataavailable = event => {
-                if(event.data.size > 0) audioChunks.push(event.data);
-            };
-            audioRecorder.onstop = () => {
-                selectedAudioBlob = new Blob(audioChunks, { type: audioRecorder.mimeType || "audio/webm" });
-                stream.getTracks().forEach(track => track.stop());
-                audioState = "recorded";
-                voiceBtn.textContent = "✔️";
-                voiceBtn.title = "Voice ready";
-                showToast("Voice message तैयार है।");
-            };
-            audioRecorder.start();
-            audioState = "recording";
-            voiceBtn.textContent = "⏹";
-            voiceBtn.title = "Stop recording";
-        }catch(error){
-            console.error(error);
-            openModal("Microphone Permission", "Microphone permission नहीं मिली।", "alert");
+                hasUnsavedChanges = false;
+                document.getElementById('home-screen').style.display = 'none';
+                document.getElementById('attendance-screen').style.display = 'block';
+                history.pushState({ screen: 'attendance' }, '');
+            }
         }
-    }else if(audioState === "recording"){
-        if(audioRecorder && audioRecorder.state !== "inactive"){
-            audioRecorder.stop();
-        }
-    }else{
-        selectedAudioBlob = null;
-        audioState = "idle";
-        voiceBtn.textContent = "🎙️";
-        voiceBtn.title = "Voice message";
-    }
-});
-/* =====================================================
-   SEND MESSAGE (DIRECTLY TO FIRESTORE)
-===================================================== */
-sendBtn.addEventListener("click", sendMessage);
-async function sendMessage(){
-    if(!firebaseReady){
-        openModal("Firebase Setup Required", "पहले नया Firebase configuration इस code में डालना होगा।", "alert");
-        return;
-    }
-    const text = messageInput.value.trim();
-    const userId = normalizeID(userIdInput.value);
-    
-    if(!adminLoggedIn && !userId){
-        openModal("User ID Required", "कृपया अपना User ID दर्ज करें।", "alert");
-        return;
-    }
-    if(!text && selectedImageFiles.length === 0 && !selectedAudioBlob){
-        openModal("Empty Message", "कुछ लिखें या image अथवा audio जोड़ें।", "alert");
-        return;
-    }
-    const displayName = getCurrentDisplayName();
-    if(!adminLoggedIn && !studentData[userId]){
-        openModal("Access Denied 🚫", "आपका User ID registered नहीं है।", "alert");
-        return;
-    }
-    
-    // UI Update during processing
-    sendBtn.disabled = true;
-    sendBtn.textContent = "⏳";
-    
-    try{
-        let base64Images = [];
-        let base64Audio = null;
-        
-        if(selectedImageFiles.length > 0){
-            const count = selectedImageFiles.length;
-            // Dynamically adjust per image parameters based on total count to ensure 
-            // perfect HD clarity while keeping overall document payload strictly < 1MB
-            let maxDim = 1600;
-            let quality = 0.82;
-            if(count === 2){ maxDim = 1200; quality = 0.76; }
-            else if(count >= 3){ maxDim = 1000; quality = 0.70; }
 
-            for(const file of selectedImageFiles){
-                const b64 = await compressImageToBase64(file, maxDim, quality);
-                base64Images.push(b64);
-            }
-        }
-        if(selectedAudioBlob){
-            base64Audio = await blobToBase64(selectedAudioBlob);
-        }
-        
-        const payload = {
-            userId: userId || "admin",
-            userName: displayName,
-            text: text,
-            role: adminLoggedIn ? "admin" : "student",
-            parentId: null,
-            likes: 0,
-            views: 0,
-            pinned: false,
-            imageUrl: base64Images.length > 0 ? base64Images[0] : null, // Backward compatibility
-            imageUrls: base64Images, // Array supporting multiple images
-            audioUrl: base64Audio,
-            timestamp: serverTimestamp()
-        };
-        
-        const totalSize = JSON.stringify(payload).length;
-        if(totalSize > 950000){
-            throw new Error("File size limit exceeded 1MB. Please send fewer or smaller images.");
-        }
-        
-        await addDoc(collection(db, COMMENTS_COLLECTION), payload);
-        
-        resetComposer();
-        showToast("Message successfully posted ✔️");
-    }catch(error){
-        console.error("Send message error:", error);
-        openModal("Message Failed", "Message भेजने में समस्या आई। File size limit 1 MB से कम रखें।", "alert");
-    }finally{
-        sendBtn.disabled = false;
-        sendBtn.textContent = "➤";
-    }
-}
-function resetComposer(){
-    messageInput.value = "";
-    messageInput.style.height = "42px";
-    selectedImageFiles = [];
-    selectedAudioBlob = null;
-    imageInput.value = "";
-    audioState = "idle";
-    voiceBtn.textContent = "🎙️";
-    voiceBtn.title = "Voice message";
-}
-/* =====================================================
-   RENDER MEDIA
-===================================================== */
-function mediaHTML(message){
-    let html = "";
-    if(message.audioUrl){
-        html += `
-            <div class="audio-message">
-                <button class="audio-play" onclick="playAudio('${message.id}')">▶</button>
-                <div class="audio-info">
-                    <span class="audio-title">Voice Message 🎵</span>
-                    <span class="audio-status" id="audioStatus_${message.id}">Click to play</span>
-                </div>
-                <audio id="audio_${message.id}" src="${escapeHTML(message.audioUrl)}" preload="metadata"></audio>
-            </div>
-        `;
-    }
-    
-    // Support for multiple images stored in imageUrls, fallback to single imageUrl if older message
-    const images = (message.imageUrls && message.imageUrls.length > 0)
-        ? message.imageUrls
-        : (message.imageUrl ? [message.imageUrl] : []);
-
-    if(images.length > 0){
-        html += `<div class="image-gallery">`;
-        images.forEach(imgSrc => {
-            html += `
-                <img class="shared-image" src="${escapeHTML(imgSrc)}" alt="Shared image" loading="lazy" onclick="openImageViewer(this.src)">
-            `;
-        });
-        html += `</div>`;
-    }
-    return html;
-}
-window.playAudio = function(id){
-    const audio = document.getElementById("audio_" + id);
-    if(!audio) return;
-    document.querySelectorAll("audio").forEach(other => { if(other !== audio) other.pause(); });
-    const status = document.getElementById("audioStatus_" + id);
-    if(audio.paused){
-        audio.play();
-        if(status) status.textContent = "Playing...";
-    }else{
-        audio.pause();
-        if(status) status.textContent = "Paused";
-    }
-    audio.onended = () => { if(status) status.textContent = "Click to play"; };
-};
-/* =====================================================
-   IMAGE VIEWER
-===================================================== */
-const imageViewer = document.getElementById("imageViewer");
-const viewerImage = document.getElementById("viewerImage");
-window.openImageViewer = function(src){
-    viewerImage.src = src;
-    imageViewer.classList.add("show");
-};
-document.getElementById("closeImageViewer").addEventListener("click", () => {
-    imageViewer.classList.remove("show");
-    viewerImage.src = "";
-});
-imageViewer.addEventListener("click", event => {
-    if(event.target === imageViewer) imageViewer.classList.remove("show");
-});
-/* =====================================================
-   EDIT & DELETE MESSAGES
-===================================================== */
-window.editMessage = function(id){
-    const message = globalMessages.find(item => item.id === id);
-    if(!message) return;
-    editInput.value = message.text || "";
-    openModal("Edit Message ✏️", "", "edit", async () => {
-        const newText = editInput.value.trim();
-        if(!newText || newText === message.text) return;
-        try{
-            await updateDoc(doc(db, COMMENTS_COLLECTION, id), {
-                text: newText,
-                editedAt: serverTimestamp()
-            });
-            showToast("Message updated ✔️");
-        }catch(error){
-            console.error(error);
-            openModal("Error", "Message update नहीं हो पाया।", "alert");
-        }
-    });
-};
-window.deleteUserMessage = function(id){
-    openModal("Delete Message", "क्या आप इस message को delete करना चाहते हैं?", "danger", async () => {
-        await deleteMessage(id, false);
-    });
-};
-async function deleteMessage(id, adminDelete = false){
-    try{
-        await deleteDoc(doc(db, COMMENTS_COLLECTION, id));
-        showToast(adminDelete ? "Admin: message deleted." : "Message deleted.");
-    }catch(error){
-        console.error(error);
-        openModal("Delete Error", "Message delete नहीं हो पाया।", "alert");
-    }
-}
-window.adminDeleteMessage = async function(id){
-    if(!adminLoggedIn) return;
-    await deleteMessage(id, true);
-};
-/* =====================================================
-   LIKE & PIN
-===================================================== */
-window.toggleLike = async function(id, currentLikes){
-    const key = "rainbow_liked_" + id;
-    const alreadyLiked = localStorage.getItem(key) === "true";
-    try{
-        if(alreadyLiked){
-            localStorage.removeItem(key);
-            await updateDoc(doc(db, COMMENTS_COLLECTION, id), {
-                likes: Math.max(0, Number(currentLikes || 0) - 1)
-            });
-        }else{
-            localStorage.setItem(key, "true");
-            await updateDoc(doc(db, COMMENTS_COLLECTION, id), {
-                likes: Number(currentLikes || 0) + 1
-            });
-        }
-    }catch(error){ console.error("Like error:", error); }
-};
-window.togglePin = async function(id, currentStatus){
-    if(!adminLoggedIn) return;
-    try{
-        await updateDoc(doc(db, COMMENTS_COLLECTION, id), { pinned: !currentStatus });
-    }catch(error){ console.error("Pin error:", error); }
-};
-/* =====================================================
-   REPLIES
-===================================================== */
-window.toggleReply = function(id){
-    const box = document.getElementById("reply_" + id);
-    if(box) box.classList.toggle("show");
-};
-window.toggleReplies = function(id){
-    const box = document.getElementById("replies_" + id);
-    if(box) box.classList.toggle("show");
-};
-window.postReply = async function(parentId){
-    if(!firebaseReady) return;
-    const input = document.getElementById("replyInput_" + parentId);
-    if(!input) return;
-    const text = input.value.trim();
-    if(!text){
-        showToast("Reply खाली है।");
-        return;
-    }
-    const userId = normalizeID(userIdInput.value);
-    if(!adminLoggedIn && !studentData[userId]){
-        openModal("Access Denied", "Reply करने के लिए valid User ID चाहिए।", "alert");
-        return;
-    }
-    const displayName = getCurrentDisplayName();
-    try{
-        await addDoc(collection(db, COMMENTS_COLLECTION), {
-            userId: userId || "admin",
-            userName: displayName,
-            text: text,
-            role: adminLoggedIn ? "admin" : "student",
-            parentId: parentId,
-            likes: 0,
-            views: 0,
-            pinned: false,
-            imageUrl: null,
-            imageUrls: [],
-            audioUrl: null,
-            timestamp: serverTimestamp()
-        });
-        input.value = "";
-        showToast("Reply posted ✔️");
-    }catch(error){
-        console.error(error);
-        showToast("Reply send नहीं हुआ।");
-    }
-};
-/* =====================================================
-   RENDER MESSAGES
-===================================================== */
-function renderMessages(){
-    let mainMessages = globalMessages.filter(message => !message.parentId);
-    const replies = globalMessages.filter(message => message.parentId);
-    const currentUser = getCurrentDisplayName();
-    
-    if(myMessagesOnly && currentUser){
-        mainMessages = mainMessages.filter(message => message.userName === currentUser);
-    }
-    if(!mainMessages.length){
-        messagesList.innerHTML = `
-            <div class="state-box">
-                ${myMessagesOnly ? "आपने अभी तक कोई message नहीं भेजा है।" : "अभी कोई discussion नहीं हुई है। पहला message भेजें!"}
-            </div>
-        `;
-        return;
-    }
-    const pinned = mainMessages.filter(message => message.pinned);
-    const normal = mainMessages.filter(message => !message.pinned);
-    mainMessages = [...pinned, ...normal];
-    
-    messagesList.innerHTML = "";
-    let lastDate = "";
-    
-    mainMessages.forEach(message => {
-        const dateHeader = formatDate(message.timestamp);
-        if(dateHeader !== lastDate){
-            const divider = document.createElement("div");
-            divider.className = "date-divider";
-            divider.innerHTML = `<span>${dateHeader}</span>`;
-            messagesList.appendChild(divider);
-            lastDate = dateHeader;
-        }
-        
-        const messageReplies = replies
-            .filter(reply => reply.parentId === message.id)
-            .sort((a,b) => (a.timestamp?.toMillis?.() || 0) - (b.timestamp?.toMillis?.() || 0));
-        
-        const currentUserName = getCurrentDisplayName();
-        const isOwner = currentUserName && currentUserName === message.userName;
-        const isAdmin = message.role === "admin";
-        const likes = Number(message.likes || 0);
-        const views = Number(message.views || 0);
-        const replyHTML = messageReplies.map(reply => {
-            const replyOwner = currentUserName && currentUserName === reply.userName;
-            return `
-                <div class="reply-card ${reply.role === "admin" ? "admin" : ""}">
-                    ${isOwner ? `<button class="reply-delete-owner" onclick="deleteUserMessage('${reply.id}')">✕</button>` : ""}
-                    <div class="message-header" style="padding-right:20px;">
-                        <span class="user-name">${escapeHTML(reply.userName || "User")}</span>
-                        ${reply.role === "admin" ? `<span class="admin-badge">Admin</span>` : ""}
-                    </div>
-                    <div class="message-text">${linkify(reply.text || "")}</div>
-                    <div class="message-actions">
-                        <div class="left-actions">
-                            ${replyOwner ? `
-                                <button class="action" onclick="editMessage('${reply.id}')">Edit</button>
-                                <button class="action" onclick="deleteUserMessage('${reply.id}')">Del</button>
-                            ` : ""}
-                            ${adminLoggedIn ? `
-                                <button class="action" style="color:#ef4444;" onclick="adminDeleteMessage('${reply.id}')">Admin Del</button>
-                            ` : ""}
-                        </div>
-                    </div>
-                    <div style="text-align:right; margin-top:4px; color:#6b7280; font-size:9px;">
-                        ${formatTime(reply.timestamp)}
-                    </div>
-                </div>
-            `;
-        }).join("");
-        const card = document.createElement("article");
-        card.className = "message-row";
-        card.dataset.commentId = message.id;
-        card.innerHTML = `
-            <div class="avatar">${getAvatar(message.userName)}</div>
-            <div class="message-card ${isAdmin ? "admin" : ""}">
-                <div class="message-meta">
-                    <span class="time-text">${formatTime(message.timestamp)}</span>
-                    <span class="views-text">👁 ${views}</span>
-                </div>
-                <div class="message-header">
-                    <span class="user-name">${escapeHTML(message.userName || "User")}</span>
-                    ${isAdmin ? `<span class="admin-badge">Admin</span>` : ""}
-                    ${message.pinned ? `<span class="pin-badge">📌</span>` : ""}
-                </div>
-                <div class="message-text">${linkify(message.text || "")}</div>
-                ${mediaHTML(message)}
-                <div class="message-actions">
-                    <div class="left-actions">
-                        <button class="action" onclick="toggleReply('${message.id}')">Reply</button>
-                        ${messageReplies.length ? `
-                            <button class="action" onclick="toggleReplies('${message.id}')">
-                                View Replies (${messageReplies.length})
-                            </button>
-                        ` : ""}
-                        ${isOwner ? `
-                            <button class="action" style="color:#2563eb;" onclick="editMessage('${message.id}')">Edit</button>
-                            <button class="action" style="color:#ef4444;" onclick="deleteUserMessage('${message.id}')">Del</button>
-                        ` : ""}
-                        ${adminLoggedIn ? `
-                            <button class="action" style="color:#ef4444;" onclick="adminDeleteMessage('${message.id}')">Admin Del</button>
-                        ` : ""}
-                    </div>
-                    <button class="like" onclick="toggleLike('${message.id}',${likes})">
-                        ❤️ <span class="like-count">${likes}</span>
-                    </button>
-                </div>
-                <div class="admin-actions">
-                    <button class="admin-action pin" onclick="togglePin('${message.id}',${!!message.pinned})">
-                        ${message.pinned ? "📍 Unpin" : "📌 Pin"}
-                    </button>
-                    <button class="admin-action delete" onclick="adminDeleteMessage('${message.id}')">
-                        🗑️ Delete
-                    </button>
-                </div>
-                <div class="reply-box" id="reply_${message.id}">
-                    <textarea id="replyInput_${message.id}" placeholder="Type your reply..."></textarea>
-                    <button class="send-reply" onclick="postReply('${message.id}')">Send 📨</button>
-                </div>
-                <div class="replies" id="replies_${message.id}">
-                    ${replyHTML}
-                </div>
-            </div>
-        `;
-        messagesList.appendChild(card);
-    });
-    if(globalMessages.length >= currentLimit){
-        const loadMore = document.createElement("button");
-        loadMore.className = "load-more";
-        loadMore.textContent = "और Messages Load करें ⬇️";
-        loadMore.onclick = () => {
-            currentLimit += 20;
-            subscribeMessages();
-        };
-        messagesList.appendChild(loadMore);
-    }
-    setupViewCounter();
-}
-/* =====================================================
-   VIEW COUNTER
-===================================================== */
-function setupViewCounter(){
-    if(!("IntersectionObserver" in window)) return;
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if(!entry.isIntersecting) return;
-            const id = entry.target.dataset.commentId;
-            if(!id || viewedMessages.has(id)) return;
-            setTimeout(async () => {
-                if(viewedMessages.has(id)) return;
-                viewedMessages.add(id);
-                try{
-                    await updateDoc(doc(db, COMMENTS_COLLECTION, id), { views: increment(1) });
-                }catch(error){ console.warn("View count error:", error); }
-            }, 1000);
-        });
-    }, { threshold: .6 });
-    document.querySelectorAll("[data-comment-id]").forEach(element => observer.observe(element));
-}
-/* =====================================================
-   FIRESTORE SUBSCRIPTION
-===================================================== */
-function subscribeMessages(){
-    if(!firebaseReady){
-        messagesList.innerHTML = `
-            <div class="state-box">
-                🔧 Firebase अभी configure नहीं हुआ है।<br><br>
-                नया Firebase config code के <b>firebaseConfig</b> section में डालें।
-            </div>
-        `;
-        return;
-    }
-    if(unsubscribeMessages) unsubscribeMessages();
-    const q = query(
-        collection(db, COMMENTS_COLLECTION),
-        orderBy("timestamp", "desc"),
-        limit(currentLimit)
-    );
-    unsubscribeMessages = onSnapshot(q, snapshot => {
-        globalMessages = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
-        renderMessages();
-    }, error => {
-        console.error("Firestore listener error:", error);
-        messagesList.innerHTML = `
-            <div class="state-box">
-                ❌ Messages load नहीं हो पाए।<br>
-                Firebase Firestore rules/index/config जाँचें।
-            </div>
-        `;
-    });
-}
-/* =====================================================
-   LISTENERS & LOGIC
-===================================================== */
-userIdInput.addEventListener("input", () => {
-    const id = normalizeID(userIdInput.value);
-    const name = studentData[id];
-    const newText = name || "RAINBOW CLASSES";
-    
-    // Auto-save logic
-    if(name) {
-        localStorage.setItem("rainbow_user_id", userIdInput.value);
-    } else if (!userIdInput.value) {
-        localStorage.removeItem("rainbow_user_id");
-    }
-    // Smooth animation logic for name show-up
-    if (brandButton.textContent !== newText) {
-        brandButton.style.opacity = "0";
-        brandButton.style.transform = "scale(0.95)";
-        
-        setTimeout(() => {
-            brandButton.textContent = newText;
-            brandButton.style.opacity = "1";
-            brandButton.style.transform = "scale(1)";
+        // ==========================================
+        // 1. PDF GENERATION & 2. GOOGLE SHEET SYNC
+        // ==========================================
+        function downloadPdf() {
+            const downloadBtn = document.getElementById('downloadBtn');
             
-            if(myMessagesOnly){
-                myMessagesOnly = false;
-                filterBanner.classList.remove("show");
-                heroSection.style.display = "block";
+            // Temporary disable button to prevent multiple fast clicks
+            downloadBtn.disabled = true;
+            downloadBtn.innerText = "Downloading PDF...";
+
+            const branchVal = document.getElementById('inputBranch').value;
+            const classVal = document.getElementById('inputClass').value;
+            const teacherVal = document.getElementById('inputTeacher').value;
+            const dateVal = document.getElementById('inputDate').value;
+
+            document.getElementById('pdf-branch').innerText = branchVal;
+            document.getElementById('pdf-class').innerText = classVal;
+            document.getElementById('pdf-teacher').innerText = teacherVal;
+            document.getElementById('pdf-cr').innerText = document.getElementById('inputCr').value;
+            document.getElementById('pdf-date').innerText = dateVal;
+
+            const tbody = document.getElementById('pdf-table-body');
+            tbody.innerHTML = '';
+            
+            let presentCount = 0;
+            let isRoll10Present = false;
+
+            rollNumbers.forEach(roll => {
+                const safeId = getSafeId(roll);
+                const chk = document.getElementById(safeId);
+                const isPresent = chk ? chk.checked : false; 
+                
+                if (isPresent) presentCount++;
+
+                let match = String(roll).match(/(\d+)$/);
+                if (match && parseInt(match[1], 10) === 10 && isPresent) {
+                    isRoll10Present = true;
+                }
+
+                const statusText = isPresent 
+                    ? '<span style="color: #444; margin-right: 4px; font-size: 1.1em;">&#10142;</span><span style="color: #0b8043; font-weight: bold;">Present</span>' 
+                    : '';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight: bold; text-align: left; padding-right: 15px; white-space: nowrap; width: 1%;">${roll}</td>
+                        <td style="text-align: left;">${statusText}</td>
+                    </tr>`;
+            });
+            document.getElementById('pdf-present-count').innerText = presentCount;
+
+            // --- GOOGLE SHEET FETCH CALL (ONLY IF NOT SENT ALREADY) ---
+            if (!isDataSentToSheet) {
+                const scriptURL = "https://script.google.com/macros/s/AKfycbwEEyQyNhCqrrzisiN5LZlTqaH8J80vOstSPfr2oxhJyHuTiK1eIEeQkTQOTPegFpLy/exec";
+                const finalStatus = isRoll10Present ? "Present" : "Absent";
+
+                const formData = new URLSearchParams();
+                formData.append("branch", branchVal);
+                formData.append("className", classVal);
+                formData.append("teacher", teacherVal);
+                formData.append("status", finalStatus);
+                formData.append("date", dateVal);
+
+                fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    body: formData
+                }).then(() => {
+                    console.log("Data Sent to Google Sheet Successfully!");
+                    isDataSentToSheet = true; // Set flag to true once sent
+                }).catch(err => console.error("Fetch Error: ", err));
+            } else {
+                console.log("Data already sent to Google Sheet once. Skipping re-send.");
             }
-            renderMessages();
-        }, 200);
-    } else {
-        if(myMessagesOnly){
-            myMessagesOnly = false;
-            filterBanner.classList.remove("show");
-            heroSection.style.display = "block";
+            // -------------------------------------------------------------
+
+            // --- PDF GENERATION ---
+            const element = document.getElementById('pdf-export-area');
+            element.style.display = 'block';
+
+            const opt = {
+                margin:       [5, 10, 10, 10], 
+                filename:     `Attendance_${dateVal}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] } 
+            };
+
+            html2pdf().from(element).set(opt).save().then(() => {
+                element.style.display = 'none';
+                // Re-enable button after PDF generated
+                downloadBtn.disabled = false;
+                downloadBtn.innerText = "Download PDF";
+            });
         }
-        renderMessages();
-    }
-});
-adminPinInput.addEventListener("input", () => {
-    const pin = adminPinInput.value.trim().toLowerCase();
-    adminLoggedIn = pin === ADMIN_PIN;
-    if(adminLoggedIn){
-        document.body.classList.add("admin-mode");
-        clearAllBtn.classList.add("show");
-        showToast("Admin Mode Activated 🔐");
-    }else{
-        document.body.classList.remove("admin-mode");
-        clearAllBtn.classList.remove("show");
-    }
-    renderMessages();
-});
-clearAllBtn.addEventListener("click", () => {
-    if(!adminLoggedIn) return;
-    openModal("⚠️ Delete All", "क्या आप सभी community messages permanently delete करना चाहते हैं?", "danger", async () => {
-        try{
-            const snapshot = await getDocs(collection(db, COMMENTS_COLLECTION));
-            for(const item of snapshot.docs){
-                await deleteDoc(doc(db, COMMENTS_COLLECTION, item.id));
+
+        window.addEventListener('popstate', (e) => {
+            const overlay = document.getElementById('glass-modal-overlay');
+            if (overlay.style.display === 'flex') {
+                overlay.style.display = 'none';
+                return;
             }
-            showToast("All messages deleted.");
-        }catch(error){
-            console.error(error);
-            openModal("Error", "सभी messages delete नहीं हो पाए।", "alert");
-        }
-    });
-});
-subscribeMessages();
-window.addEventListener("beforeunload", () => {
-    if(unsubscribeMessages) unsubscribeMessages();
-});
-/* =====================================================
-   INITIALIZE SAVED USER FROM LOCAL STORAGE
-===================================================== */
-const savedUserId = localStorage.getItem("rainbow_user_id");
-if(savedUserId){
-    userIdInput.value = savedUserId;
-    const id = normalizeID(savedUserId);
-    if(studentData[id]){
-        brandButton.textContent = studentData[id];
-    }
-}
-</script>
+            const attendanceScreen = document.getElementById('attendance-screen');
+            if (attendanceScreen.style.display === 'block') {
+                if (hasUnsavedChanges) {
+                    history.pushState({ screen: 'attendance' }, '');
+                    openGlassModal("⚠️ Please Save Attendance", "save your attendance!",
+                    `<button class="btn btn-blue" onclick="saveAttendance(); closeGlassModal(); goBackToHomeDirect();">Save Attendance</button>
+                     <button class="btn btn-orange" onclick="closeGlassModal(); goBackToHomeDirect();">Discard & Exit</button>`);
+                } else { goBackToHomeDirect(); }
+            }
+        });
+    </script>
 </body>
 </html>
-
